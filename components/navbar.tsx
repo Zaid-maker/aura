@@ -100,7 +100,7 @@ export function Navbar() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem asChild>
-                      <Link href={`/${session.user.id}`} className="cursor-pointer">
+                      <Link href={`/${session.user.username || session.user.id}`} className="cursor-pointer">
                         Profile
                       </Link>
                     </DropdownMenuItem>
