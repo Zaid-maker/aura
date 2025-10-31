@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { 
@@ -21,10 +22,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/mode-toggle";
+import { CreatePostDialog } from "@/components/create-post-dialog";
 
 export function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [createPostOpen, setCreatePostOpen] = useState(false);
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -36,6 +39,7 @@ export function Navbar() {
   }
 
   return (
+    <>
     <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex items-center justify-between h-16">
@@ -86,11 +90,14 @@ export function Navbar() {
                   </Button>
                 </Link>
 
-                <Link href="/create">
-                  <Button variant="ghost" size="icon" className="hover:bg-transparent">
-                    <PlusSquare className="h-6 w-6" />
-                  </Button>
-                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="hover:bg-transparent"
+                  onClick={() => setCreatePostOpen(true)}
+                >
+                  <PlusSquare className="h-6 w-6" />
+                </Button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -137,5 +144,8 @@ export function Navbar() {
         </div>
       </div>
     </nav>
+    {/* Create Post Dialog - Rendered outside nav for proper positioning */}
+    <CreatePostDialog open={createPostOpen} onOpenChange={setCreatePostOpen} />
+    </>
   );
 }
