@@ -2,8 +2,28 @@ import { Post } from "@/components/post";
 import { StoriesBar } from "@/components/stories-bar";
 import { SuggestedUsers } from "@/components/suggested-users";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export default async function Home() {
+  const session = await getServerSession(authOptions);
+  
+  // Get current user's likes
+  let userLikes: string[] = [];
+  if (session?.user?.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: {
+        likes: {
+          select: {
+            postId: true,
+          },
+        },
+      },
+    });
+    userLikes = user?.likes.map((like) => like.postId) || [];
+  }
+
   // Fetch posts with user data, likes, and comments count
   const posts = await prisma.post.findMany({
     include: {
@@ -79,6 +99,7 @@ export default async function Home() {
                     ...post,
                     createdAt: post.createdAt,
                   }}
+                  isLiked={userLikes.includes(post.id)}
                 />
               ))
             ) : (
