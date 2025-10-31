@@ -49,7 +49,7 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
   };
 
   return (
-    <Card className="border-none shadow-none">
+    <Card className="border-none shadow-none bg-white dark:bg-zinc-900">
       {/* Post Header */}
       <div className="flex items-center justify-between p-3">
         <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
           </Link>
           <Link 
             href={`/${post.user.username}`}
-            className="text-sm font-semibold hover:text-gray-600"
+            className="text-sm font-semibold hover:text-gray-600 dark:hover:text-gray-300"
           >
             {post.user.username || post.user.name}
           </Link>
@@ -131,14 +131,14 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
         {post._count && post._count.comments > 0 && (
           <Link 
             href={`/p/${post.id}`}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           >
             View all {post._count.comments} comments
           </Link>
         )}
 
         {/* Time */}
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
         </p>
       </div>

@@ -20,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -35,7 +36,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
       <div className="mx-auto max-w-6xl px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -50,13 +51,15 @@ export function Navbar() {
               <input
                 type="text"
                 placeholder="Search"
-                className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
+                className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-zinc-700"
               />
             </div>
           </div>
 
           {/* Navigation Icons */}
           <div className="flex items-center gap-6">
+            <ModeToggle />
+            
             <Link href="/">
               <Button variant="ghost" size="icon" className="hover:bg-transparent">
                 <Home className={`h-6 w-6 ${isActive("/") ? "fill-current" : ""}`} />
@@ -107,8 +110,10 @@ export function Navbar() {
                     <DropdownMenuItem>
                       Saved
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      Settings
+                    <DropdownMenuItem asChild>
+                      <Link href="/settings" className="cursor-pointer">
+                        Settings
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem

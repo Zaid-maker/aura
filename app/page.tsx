@@ -63,7 +63,7 @@ export default async function Home() {
   });
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-black">
       <main className="flex-1 flex justify-center px-4 py-8">
         <div className="w-full max-w-[630px] space-y-6">
           {/* Stories Bar */}
@@ -86,7 +86,7 @@ export default async function Home() {
                 <h2 className="text-2xl font-semibold mb-2">
                   Welcome to Apnagram!
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400">
                   Start following people to see their posts in your feed.
                 </p>
               </div>
