@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
+import { CommentsDialog } from "@/components/comments-dialog";
 
 interface PostProps {
   post: {
@@ -34,7 +35,9 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post._count?.likes || 0);
+  const [commentsCount, setCommentsCount] = useState(post._count?.comments || 0);
   const [showFullCaption, setShowFullCaption] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
   const handleLike = async () => {
     try {
@@ -63,6 +66,7 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
   };
 
   return (
+    <>
     <Card className="border border-gray-200 dark:border-zinc-800 rounded-lg overflow-hidden bg-white dark:bg-black">
       {/* Post Header */}
       <div className="flex items-center justify-between px-4 py-3">
@@ -120,7 +124,12 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
                 }`}
               />
             </Button>
-            <Button variant="ghost" size="icon" className="hover:bg-transparent hover:opacity-50 h-8 w-8 transition-opacity p-0">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="hover:bg-transparent hover:opacity-50 h-8 w-8 transition-opacity p-0"
+              onClick={() => setShowComments(true)}
+            >
               <MessageCircle className="h-7 w-7 hover:text-gray-500 dark:hover:text-gray-400" />
             </Button>
             <Button variant="ghost" size="icon" className="hover:bg-transparent hover:opacity-50 h-8 w-8 transition-opacity p-0">
@@ -168,13 +177,13 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
         )}
 
         {/* Comments Count */}
-        {post._count && post._count.comments > 0 && (
-          <Link 
-            href={`/p/${post.id}`}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:opacity-50 transition-opacity block"
+        {commentsCount > 0 && (
+          <button
+            onClick={() => setShowComments(true)}
+            className="text-sm text-gray-500 dark:text-gray-400 hover:opacity-50 transition-opacity block text-left"
           >
-            View all {post._count.comments} comments
-          </Link>
+            View all {commentsCount} comments
+          </button>
         )}
 
         {/* Time */}
@@ -189,15 +198,27 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
           type="text"
           placeholder="Add a comment..."
           className="flex-1 border-none bg-transparent text-sm outline-none shadow-none focus-visible:ring-0 px-0 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+          onClick={() => setShowComments(true)}
+          readOnly
         />
         <Button 
           variant="ghost" 
           size="sm"
           className="text-sm font-semibold text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-transparent h-auto p-0"
+          onClick={() => setShowComments(true)}
         >
           Post
         </Button>
       </div>
     </Card>
+
+    {/* Comments Dialog */}
+    <CommentsDialog
+      open={showComments}
+      onOpenChange={setShowComments}
+      postId={post.id}
+      onCommentAdded={() => setCommentsCount(prev => prev + 1)}
+    />
+    </>
   );
 }
