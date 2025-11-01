@@ -1,9 +1,10 @@
 name = "aura"
 compatibility_date = "2024-11-02"
 compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next/worker"
 
-# Note: For Windows users, deploy via Cloudflare Dashboard (Git integration)
-# instead of CLI due to Vercel CLI compatibility issues
+# OpenNext deployment configuration
+# Deploy via: bun run deploy
 
 # Uncomment and configure if using Cloudflare bindings
 # [[kv_namespaces]]
