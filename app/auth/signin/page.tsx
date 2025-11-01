@@ -168,7 +168,7 @@ export default function SignInPage() {
               </div>
 
               {/* Demo Accounts */}
-              <div className="text-center space-y-3 p-4 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200 dark:border-purple-800">
+              <div className="text-center space-y-3 p-4 rounded-lg bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200 dark:border-purple-800">
                 <p className="text-sm font-semibold text-purple-900 dark:text-purple-300">
                   Try Demo Accounts
                 </p>

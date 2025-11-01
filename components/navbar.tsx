@@ -40,9 +40,9 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 md:block hidden">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="flex items-center justify-between h-16">
+      <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 max-md:hidden">
+        <div className="mx-auto max-w-6xl px-4 w-full">
+          <div className="flex items-center justify-between h-16 w-full">
             {/* Logo */}
             <Link href="/" className="text-2xl font-bold">
               Aura
