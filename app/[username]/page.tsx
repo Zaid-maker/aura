@@ -12,7 +12,6 @@ import { Settings, Grid3x3, Bookmark, UserCircle2 } from "lucide-react";
 import { FollowButton } from "@/components/follow-button";
 import { EditProfileDialog } from "@/components/edit-profile-dialog";
 
-
 interface ProfilePageProps {
   params: Promise<{
     username: string;

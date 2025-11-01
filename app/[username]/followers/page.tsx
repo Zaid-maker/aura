@@ -8,7 +8,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FollowButton } from "@/components/follow-button";
 
-
 interface FollowersPageProps {
   params: Promise<{
     username: string;

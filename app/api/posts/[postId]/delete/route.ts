@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { UTApi } from "uploadthing/server";
 
-
 const utapi = new UTApi();
 
 export async function DELETE(
