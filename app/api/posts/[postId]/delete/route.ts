@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { UTApi } from "uploadthing/server";
 
-export const runtime = "nodejs";
 
 const utapi = new UTApi();
 
