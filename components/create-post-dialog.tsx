@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { X, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface CreatePostDialogProps {
   open: boolean;
@@ -45,10 +46,14 @@ export function CreatePostDialog({ open, onOpenChange }: CreatePostDialogProps) 
         setImageUrl("");
         setCaption("");
         onOpenChange(false);
+        toast.success("Post created successfully");
         router.refresh();
+      } else {
+        toast.error("Failed to create post");
       }
     } catch (error) {
       console.error("Error creating post:", error);
+      toast.error("Failed to create post");
     } finally {
       setIsSubmitting(false);
     }
@@ -70,10 +75,11 @@ export function CreatePostDialog({ open, onOpenChange }: CreatePostDialogProps) 
                 onClientUploadComplete={(res) => {
                   if (res && res[0]) {
                     setImageUrl(res[0].url);
+                    toast.success("Image uploaded successfully");
                   }
                 }}
                 onUploadError={(error: Error) => {
-                  alert(`ERROR! ${error.message}`);
+                  toast.error(`Upload failed: ${error.message}`);
                 }}
                 appearance={{
                   button: "bg-blue-500 hover:bg-blue-600 text-white",

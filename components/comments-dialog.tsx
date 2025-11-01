@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { toast } from "sonner";
 
 interface Comment {
   id: string;
@@ -86,9 +87,13 @@ export function CommentsDialog({
         setComments([newComment, ...comments]);
         setCommentText("");
         onCommentAdded?.();
+        toast.success("Comment added successfully");
+      } else {
+        toast.error("Failed to add comment");
       }
     } catch (error) {
       console.error("Error posting comment:", error);
+      toast.error("Failed to add comment");
     } finally {
       setIsSubmitting(false);
     }

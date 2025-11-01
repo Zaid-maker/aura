@@ -29,6 +29,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { CommentsDialog } from "@/components/comments-dialog";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 interface PostProps {
   post: {
@@ -65,23 +66,38 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/p/${post.id}`);
-    // You could add a toast notification here
+    toast.success("Link copied to clipboard");
   };
 
   const handleUnfollow = () => {
     // Implement unfollow logic
-    console.log("Unfollow user");
+    toast.info("Unfollow feature coming soon");
   };
 
   const handleReport = () => {
     // Implement report logic
-    console.log("Report post");
+    toast.info("Report feature coming soon");
   };
 
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this post?")) {
-      // Implement delete logic
-      console.log("Delete post");
+      try {
+        const response = await fetch(`/api/posts/${post.id}/delete`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          toast.success("Post deleted successfully");
+          // Reload the page to refresh the feed
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          const data = await response.json();
+          toast.error(data.error || "Failed to delete post");
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        toast.error("Failed to delete post");
+      }
     }
   };
 
