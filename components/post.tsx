@@ -5,17 +5,30 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Heart,
   MessageCircle,
   Send,
   Bookmark,
   MoreHorizontal,
+  Link2,
+  UserMinus,
+  Flag,
+  AlertCircle,
+  Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { CommentsDialog } from "@/components/comments-dialog";
+import { useSession } from "next-auth/react";
 
 interface PostProps {
   post: {
@@ -38,6 +51,7 @@ interface PostProps {
 }
 
 export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
+  const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post._count?.likes || 0);
@@ -46,6 +60,30 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
   );
   const [showFullCaption, setShowFullCaption] = useState(false);
   const [showComments, setShowComments] = useState(false);
+
+  const isOwnPost = session?.user?.id === post.user.id;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/p/${post.id}`);
+    // You could add a toast notification here
+  };
+
+  const handleUnfollow = () => {
+    // Implement unfollow logic
+    console.log("Unfollow user");
+  };
+
+  const handleReport = () => {
+    // Implement report logic
+    console.log("Report post");
+  };
+
+  const handleDelete = async () => {
+    if (confirm("Are you sure you want to delete this post?")) {
+      // Implement delete logic
+      console.log("Delete post");
+    }
+  };
 
   const handleLike = async () => {
     try {
@@ -94,13 +132,48 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
               {post.user.username || post.user.name}
             </Link>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hover:bg-transparent h-8 w-8"
-          >
-            <MoreHorizontal className="h-6 w-6" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-transparent h-8 w-8"
+              >
+                <MoreHorizontal className="h-6 w-6" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {isOwnPost ? (
+                <>
+                  <DropdownMenuItem onClick={handleDelete} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete post
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleCopyLink}>
+                    <Link2 className="mr-2 h-4 w-4" />
+                    Copy link
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={handleUnfollow} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
+                    <UserMinus className="mr-2 h-4 w-4" />
+                    Unfollow
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleCopyLink}>
+                    <Link2 className="mr-2 h-4 w-4" />
+                    Copy link
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleReport}>
+                    <Flag className="mr-2 h-4 w-4" />
+                    Report
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Post Image */}
