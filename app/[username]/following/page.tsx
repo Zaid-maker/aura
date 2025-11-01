@@ -8,6 +8,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FollowButton } from "@/components/follow-button";
 
+export const runtime = 'edge';
+
 interface FollowingPageProps {
   params: Promise<{
     username: string;

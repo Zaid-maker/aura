@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+export const runtime = 'edge';
+
 export async function PATCH(request: Request) {
   try {
     const session = await getServerSession(authOptions);

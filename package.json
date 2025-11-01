@@ -5,10 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "preview": "npm run pages:build && wrangler pages dev",
-    "deploy": "npm run pages:build && wrangler pages deploy",
-    "cf:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
+    "pages:build": "next build",
+    "preview": "wrangler pages dev .next --compatibility-flag=nodejs_compat",
+    "deploy": "wrangler pages deploy .next --project-name=aura",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
