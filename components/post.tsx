@@ -80,9 +80,24 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
     toast.success("Link copied to clipboard");
   };
 
-  const handleUnfollow = () => {
-    // Implement unfollow logic
-    toast.info("Unfollow feature coming soon");
+  const handleUnfollow = async () => {
+    try {
+      const response = await fetch(`/api/users/${post.user.id}/unfollow`, {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        toast.success(`Unfollowed @${post.user.username || post.user.name}`);
+        // Optionally reload the page to refresh the feed
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to unfollow");
+      }
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      toast.error("Failed to unfollow");
+    }
   };
 
   const handleReport = () => {
