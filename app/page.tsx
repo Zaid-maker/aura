@@ -105,10 +105,10 @@ export default async function Home() {
             ) : (
               <div className="text-center py-12">
                 <h2 className="text-2xl font-semibold mb-2">
-                  Welcome to Apnagram!
+                  Welcome to Aura! 🌟
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Start following people to see their posts in your feed.
+                  Start following people to see their posts and build your aura.
                 </p>
               </div>
             )}

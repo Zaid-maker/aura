@@ -34,7 +34,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle>Appearance</CardTitle>
             <CardDescription>
-              Customize how Apnagram looks on your device
+              Customize how Aura looks on your device
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Apnagram - Share Your Moments",
-  description: "An Instagram-inspired social media web app",
+  title: "Aura - Share Your Vibe",
+  description: "A modern social platform where your moments create your aura",
 };
 
 export default function RootLayout({

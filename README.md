@@ -1,8 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aura 🌟
+
+A modern social platform where your moments create your aura. Built with Next.js 16, Bun, Prisma, and NextAuth.
+
+## Features
+
+- 📸 Share photos with captions
+- 💬 Comment on posts
+- ❤️ Like and save posts
+- 👥 Follow/unfollow users
+- 🌙 Dark mode support
+- 📱 Fully responsive design
+- 🎨 Instagram-inspired UI
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Package Manager**: Bun
+- **Database**: Prisma + SQLite
+- **Authentication**: NextAuth.js
+- **File Upload**: UploadThing
+- **UI Components**: shadcn/ui
+- **Styling**: Tailwind CSS v4
+- **Notifications**: Sonner
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+bun install
+```
+
+Then, set up your environment variables in `.env`:
+
+```env
+DATABASE_URL="file:./dev.db"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret-here"
+UPLOADTHING_TOKEN="your-uploadthing-token"
+```
+
+Run database migrations:
+
+```bash
+bunx prisma migrate dev
+bunx prisma generate
+```
+
+Seed the database (optional):
+
+```bash
+bun run seed
+```
+
+Finally, run the development server:
 
 ```bash
 npm run dev

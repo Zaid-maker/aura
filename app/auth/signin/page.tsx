@@ -46,8 +46,8 @@ export default function SignInPage() {
         {/* Logo Card */}
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-4xl font-bold mb-4">Apnagram</CardTitle>
-            <CardDescription>Sign in to see photos and videos from your friends</CardDescription>
+            <CardTitle className="text-4xl font-bold mb-4">Aura</CardTitle>
+            <CardDescription>Sign in to share your vibe</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

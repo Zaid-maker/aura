@@ -75,9 +75,9 @@ export default function SignUpPage() {
         {/* Sign Up Card */}
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-4xl font-bold mb-4">Apnagram</CardTitle>
+            <CardTitle className="text-4xl font-bold mb-4">Aura</CardTitle>
             <CardDescription>
-              Sign up to see photos and videos from your friends
+              Sign up to share your vibe and build your aura
             </CardDescription>
           </CardHeader>
           <CardContent>

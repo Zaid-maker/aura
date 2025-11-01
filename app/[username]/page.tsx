@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   });
 
   return {
-    title: user ? `${user.name} (@${user.username}) • Apnagram` : "Profile • Apnagram",
+    title: user ? `${user.name} (@${user.username}) • Aura` : "Profile • Aura",
   };
 }
 

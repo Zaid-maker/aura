@@ -112,7 +112,7 @@ export function SuggestedUsers({ users, currentUser }: SuggestedUsersProps) {
           <span>·</span>
           <Link href="/terms" className="hover:underline">Terms</Link>
         </div>
-        <p>© 2025 APNAGRAM</p>
+        <p>© 2025 AURA</p>
       </div>
     </div>
   );
