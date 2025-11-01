@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
@@ -19,6 +19,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#9333ea",
+};
+
 export const metadata: Metadata = {
   title: "Aura - Share Your Vibe",
   description: "A modern social platform where your moments create your aura",
@@ -35,7 +39,6 @@ export const metadata: Metadata = {
     icon: "/icons/icon-192x192.svg",
     apple: "/icons/icon-192x192.svg",
   },
-  themeColor: "#9333ea",
 };
 
 export default function RootLayout({
