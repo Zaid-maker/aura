@@ -40,7 +40,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
+      <nav className="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 md:block hidden">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
