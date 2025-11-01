@@ -59,12 +59,14 @@ interface PostProps {
     };
   };
   isLiked?: boolean;
+  isFollowing?: boolean;
 }
 
-export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
+export function Post({ post, isLiked: initialIsLiked = false, isFollowing: initialIsFollowing = false }: PostProps) {
   const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isSaved, setIsSaved] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [likesCount, setLikesCount] = useState(post._count?.likes || 0);
   const [commentsCount, setCommentsCount] = useState(
     post._count?.comments || 0
@@ -87,6 +89,7 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
       });
 
       if (response.ok) {
+        setIsFollowing(false);
         toast.success(`Unfollowed @${post.user.username || post.user.name}`);
         // Optionally reload the page to refresh the feed
         setTimeout(() => window.location.reload(), 1000);
@@ -202,11 +205,15 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
                 </>
               ) : (
                 <>
-                  <DropdownMenuItem onClick={handleUnfollow} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
-                    <UserMinus className="mr-2 h-4 w-4" />
-                    Unfollow
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
+                  {isFollowing && (
+                    <>
+                      <DropdownMenuItem onClick={handleUnfollow} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
+                        <UserMinus className="mr-2 h-4 w-4" />
+                        Unfollow
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem onClick={handleCopyLink}>
                     <Link2 className="mr-2 h-4 w-4" />
                     Copy link

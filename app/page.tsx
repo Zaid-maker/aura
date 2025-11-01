@@ -8,8 +8,9 @@ import { authOptions } from "@/lib/auth";
 export default async function Home() {
   const session = await getServerSession(authOptions);
   
-  // Get current user's likes
+  // Get current user's likes and following
   let userLikes: string[] = [];
+  let userFollowing: string[] = [];
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -19,9 +20,15 @@ export default async function Home() {
             postId: true,
           },
         },
+        following: {
+          select: {
+            followingId: true,
+          },
+        },
       },
     });
     userLikes = user?.likes.map((like) => like.postId) || [];
+    userFollowing = user?.following.map((follow) => follow.followingId) || [];
   }
 
   // Fetch posts with user data, likes, and comments count
@@ -100,6 +107,7 @@ export default async function Home() {
                     createdAt: post.createdAt,
                   }}
                   isLiked={userLikes.includes(post.id)}
+                  isFollowing={userFollowing.includes(post.user.id)}
                 />
               ))
             ) : (
