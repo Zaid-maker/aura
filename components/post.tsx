@@ -12,6 +12,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Heart,
   MessageCircle,
   Send,
@@ -61,6 +71,7 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
   );
   const [showFullCaption, setShowFullCaption] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const isOwnPost = session?.user?.id === post.user.id;
 
@@ -79,25 +90,28 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
     toast.info("Report feature coming soon");
   };
 
-  const handleDelete = async () => {
-    if (confirm("Are you sure you want to delete this post?")) {
-      try {
-        const response = await fetch(`/api/posts/${post.id}/delete`, {
-          method: "DELETE",
-        });
+  const handleDeleteClick = () => {
+    setShowDeleteDialog(true);
+  };
 
-        if (response.ok) {
-          toast.success("Post deleted successfully");
-          // Reload the page to refresh the feed
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          const data = await response.json();
-          toast.error(data.error || "Failed to delete post");
-        }
-      } catch (error) {
-        console.error("Error deleting post:", error);
-        toast.error("Failed to delete post");
+  const handleDeleteConfirm = async () => {
+    try {
+      const response = await fetch(`/api/posts/${post.id}/delete`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success("Post deleted successfully");
+        setShowDeleteDialog(false);
+        // Reload the page to refresh the feed
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to delete post");
       }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error("Failed to delete post");
     }
   };
 
@@ -161,7 +175,7 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
             <DropdownMenuContent align="end" className="w-48">
               {isOwnPost ? (
                 <>
-                  <DropdownMenuItem onClick={handleDelete} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
+                  <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete post
                   </DropdownMenuItem>
@@ -329,6 +343,27 @@ export function Post({ post, isLiked: initialIsLiked = false }: PostProps) {
         postId={post.id}
         onCommentAdded={() => setCommentsCount((prev) => prev + 1)}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this post? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
