@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export async function POST(request: Request) {
   try {

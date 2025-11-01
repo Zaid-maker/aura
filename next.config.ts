@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // Required for Cloudflare Pages
-  output: 'standalone',
+  output: "standalone",
 };
 
 export default nextConfig;
