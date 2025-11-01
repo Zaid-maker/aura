@@ -103,6 +103,25 @@ export function Post({ post, isLiked: initialIsLiked = false, isFollowing: initi
     }
   };
 
+  const handleFollow = async () => {
+    try {
+      const response = await fetch(`/api/users/${post.user.id}/follow`, {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        setIsFollowing(true);
+        toast.success(`Following @${post.user.username || post.user.name}`);
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to follow");
+      }
+    } catch (error) {
+      console.error("Error following user:", error);
+      toast.error("Failed to follow");
+    }
+  };
+
   const handleReport = () => {
     // Implement report logic
     toast.info("Report feature coming soon");
@@ -179,6 +198,19 @@ export function Post({ post, isLiked: initialIsLiked = false, isFollowing: initi
             >
               {post.user.username || post.user.name}
             </Link>
+            {!isOwnPost && (
+              <>
+                <span className="text-gray-300 dark:text-gray-600">•</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={isFollowing ? handleUnfollow : handleFollow}
+                  className="text-sm font-semibold text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 h-auto p-0 hover:bg-transparent"
+                >
+                  {isFollowing ? "Following" : "Follow"}
+                </Button>
+              </>
+            )}
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
