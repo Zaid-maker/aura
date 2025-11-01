@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     if (!email || !name || !username || !password) {
       return NextResponse.json(
         { error: "All fields are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     if (existingUserByEmail) {
       return NextResponse.json(
         { error: "Email already registered" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     if (existingUserByUsername) {
       return NextResponse.json(
         { error: "Username already taken" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -61,13 +61,13 @@ export async function POST(request: Request) {
           username: user.username,
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -62,14 +62,18 @@ interface PostProps {
   isFollowing?: boolean;
 }
 
-export function Post({ post, isLiked: initialIsLiked = false, isFollowing: initialIsFollowing = false }: PostProps) {
+export function Post({
+  post,
+  isLiked: initialIsLiked = false,
+  isFollowing: initialIsFollowing = false,
+}: PostProps) {
   const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isSaved, setIsSaved] = useState(false);
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [likesCount, setLikesCount] = useState(post._count?.likes || 0);
   const [commentsCount, setCommentsCount] = useState(
-    post._count?.comments || 0
+    post._count?.comments || 0,
   );
   const [showFullCaption, setShowFullCaption] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -225,7 +229,10 @@ export function Post({ post, isLiked: initialIsLiked = false, isFollowing: initi
             <DropdownMenuContent align="end" className="w-48">
               {isOwnPost ? (
                 <>
-                  <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
+                  <DropdownMenuItem
+                    onClick={handleDeleteClick}
+                    className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+                  >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete post
                   </DropdownMenuItem>
@@ -239,7 +246,10 @@ export function Post({ post, isLiked: initialIsLiked = false, isFollowing: initi
                 <>
                   {isFollowing && (
                     <>
-                      <DropdownMenuItem onClick={handleUnfollow} className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400">
+                      <DropdownMenuItem
+                        onClick={handleUnfollow}
+                        className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+                      >
                         <UserMinus className="mr-2 h-4 w-4" />
                         Unfollow
                       </DropdownMenuItem>
@@ -404,7 +414,8 @@ export function Post({ post, isLiked: initialIsLiked = false, isFollowing: initi
           <AlertDialogHeader>
             <AlertDialogTitle>Delete post?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be undone.
+              Are you sure you want to delete this post? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

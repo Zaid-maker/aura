@@ -20,7 +20,10 @@ interface CreatePostDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function CreatePostDialog({ open, onOpenChange }: CreatePostDialogProps) {
+export function CreatePostDialog({
+  open,
+  onOpenChange,
+}: CreatePostDialogProps) {
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState<string>("");
   const [caption, setCaption] = useState("");

@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
@@ -71,7 +77,7 @@ export default function SignInPage() {
                   className="w-full"
                 />
               </div>
-              
+
               {error && (
                 <p className="text-sm text-red-500 text-center">{error}</p>
               )}
@@ -107,7 +113,10 @@ export default function SignInPage() {
           <CardContent className="pt-6 text-center">
             <p className="text-sm">
               Don't have an account?{" "}
-              <Link href="/auth/signup" className="font-semibold text-blue-500 hover:text-blue-600">
+              <Link
+                href="/auth/signup"
+                className="font-semibold text-blue-500 hover:text-blue-600"
+              >
                 Sign up
               </Link>
             </p>

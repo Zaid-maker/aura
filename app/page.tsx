@@ -7,7 +7,7 @@ import { authOptions } from "@/lib/auth";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  
+
   // Get current user's likes and following
   let userLikes: string[] = [];
   let userFollowing: string[] = [];

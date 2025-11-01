@@ -63,7 +63,10 @@ export default async function FollowersPage({ params }: FollowersPageProps) {
           {user.followers.length > 0 ? (
             <div className="space-y-4">
               {user.followers.map(({ follower }) => (
-                <div key={follower.id} className="flex items-center justify-between">
+                <div
+                  key={follower.id}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center gap-3">
                     <Link href={`/${follower.username}`}>
                       <Avatar className="h-12 w-12">

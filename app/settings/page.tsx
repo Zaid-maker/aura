@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useTheme } from "next-themes";
@@ -51,7 +57,11 @@ export default function SettingsPage() {
                         : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                     }`}
                   >
-                    <RadioGroupItem value="light" id="light" className="sr-only" />
+                    <RadioGroupItem
+                      value="light"
+                      id="light"
+                      className="sr-only"
+                    />
                     <Sun className="h-8 w-8" />
                     <div className="text-center">
                       <p className="font-semibold">Light</p>
@@ -70,7 +80,11 @@ export default function SettingsPage() {
                         : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                     }`}
                   >
-                    <RadioGroupItem value="dark" id="dark" className="sr-only" />
+                    <RadioGroupItem
+                      value="dark"
+                      id="dark"
+                      className="sr-only"
+                    />
                     <Moon className="h-8 w-8" />
                     <div className="text-center">
                       <p className="font-semibold">Dark</p>
@@ -89,7 +103,11 @@ export default function SettingsPage() {
                         : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                     }`}
                   >
-                    <RadioGroupItem value="system" id="system" className="sr-only" />
+                    <RadioGroupItem
+                      value="system"
+                      id="system"
+                      className="sr-only"
+                    />
                     <Monitor className="h-8 w-8" />
                     <div className="text-center">
                       <p className="font-semibold">System</p>
@@ -104,7 +122,8 @@ export default function SettingsPage() {
 
             <div className="pt-4 border-t">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                The theme will be applied across all pages and persisted in your browser.
+                The theme will be applied across all pages and persisted in your
+                browser.
               </p>
             </div>
           </CardContent>
@@ -114,9 +133,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Account</CardTitle>
-            <CardDescription>
-              Manage your account information
-            </CardDescription>
+            <CardDescription>Manage your account information</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -129,9 +146,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Privacy</CardTitle>
-            <CardDescription>
-              Control who can see your content
-            </CardDescription>
+            <CardDescription>Control who can see your content</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-600 dark:text-gray-400">

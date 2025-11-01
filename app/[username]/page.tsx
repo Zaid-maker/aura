@@ -20,13 +20,10 @@ interface ProfilePageProps {
 
 export async function generateMetadata({ params }: ProfilePageProps) {
   const { username } = await params;
-  
+
   const user = await prisma.user.findFirst({
     where: {
-      OR: [
-        { username: username },
-        { id: username }
-      ]
+      OR: [{ username: username }, { id: username }],
     },
   });
 
@@ -42,10 +39,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   // Find user by username or ID
   const user = await prisma.user.findFirst({
     where: {
-      OR: [
-        { username: username },
-        { id: username }
-      ]
+      OR: [{ username: username }, { id: username }],
     },
     include: {
       posts: {
@@ -108,8 +102,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         {/* Profile Info */}
         <div className="flex-1">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-6">
-            <h1 className="text-xl font-normal">{user.username || user.name}</h1>
-            
+            <h1 className="text-xl font-normal">
+              {user.username || user.name}
+            </h1>
+
             <div className="flex gap-2">
               {isOwnProfile ? (
                 <>
@@ -134,11 +130,17 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               <span className="font-semibold">{user._count.posts}</span>{" "}
               <span className="text-gray-600">posts</span>
             </div>
-            <Link href={`/${user.username}/followers`} className="hover:text-gray-600">
+            <Link
+              href={`/${user.username}/followers`}
+              className="hover:text-gray-600"
+            >
               <span className="font-semibold">{user._count.followers}</span>{" "}
               <span className="text-gray-600">followers</span>
             </Link>
-            <Link href={`/${user.username}/following`} className="hover:text-gray-600">
+            <Link
+              href={`/${user.username}/following`}
+              className="hover:text-gray-600"
+            >
               <span className="font-semibold">{user._count.following}</span>{" "}
               <span className="text-gray-600">following</span>
             </Link>

@@ -8,7 +8,7 @@ const utapi = new UTApi();
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -36,7 +36,7 @@ export async function DELETE(
     if (post.userId !== session.user.id) {
       return NextResponse.json(
         { error: "You can only delete your own posts" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function DELETE(
     console.error("Error deleting post:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

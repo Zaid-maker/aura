@@ -18,7 +18,10 @@ interface StoryProps {
 
 export function Story({ story, hasStory = true }: StoryProps) {
   return (
-    <Link href={`/stories/${story.user.username}`} className="flex flex-col items-center gap-1">
+    <Link
+      href={`/stories/${story.user.username}`}
+      className="flex flex-col items-center gap-1"
+    >
       <div
         className={`rounded-full p-0.5 ${
           hasStory

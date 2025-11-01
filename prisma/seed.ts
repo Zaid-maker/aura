@@ -70,7 +70,8 @@ async function main() {
   const post1 = await prisma.post.create({
     data: {
       caption: "Beautiful sunset at the beach 🌅",
-      imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+      imageUrl:
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
       userId: user1.id,
     },
   });
@@ -78,7 +79,8 @@ async function main() {
   const post2 = await prisma.post.create({
     data: {
       caption: "Coffee and croissants for breakfast ☕🥐",
-      imageUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800",
+      imageUrl:
+        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800",
       userId: user2.id,
     },
   });
@@ -86,7 +88,8 @@ async function main() {
   const post3 = await prisma.post.create({
     data: {
       caption: "Morning workout session 💪 #fitness",
-      imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800",
+      imageUrl:
+        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800",
       userId: user3.id,
     },
   });
@@ -94,7 +97,8 @@ async function main() {
   const post4 = await prisma.post.create({
     data: {
       caption: "New artwork in progress 🎨✨",
-      imageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800",
+      imageUrl:
+        "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800",
       userId: user4.id,
     },
   });
@@ -102,7 +106,8 @@ async function main() {
   const post5 = await prisma.post.create({
     data: {
       caption: "Exploring the city streets 🏙️",
-      imageUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800",
+      imageUrl:
+        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800",
       userId: user1.id,
     },
   });
@@ -160,17 +165,20 @@ async function main() {
   await prisma.story.createMany({
     data: [
       {
-        imageUrl: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=800",
+        imageUrl:
+          "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=800",
         userId: user1.id,
         expiresAt,
       },
       {
-        imageUrl: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800",
+        imageUrl:
+          "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800",
         userId: user2.id,
         expiresAt,
       },
       {
-        imageUrl: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800",
+        imageUrl:
+          "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800",
         userId: user3.id,
         expiresAt,
       },

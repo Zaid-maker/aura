@@ -10,7 +10,11 @@ interface FollowButtonProps {
   isAuthenticated: boolean;
 }
 
-export function FollowButton({ userId, isFollowing: initialIsFollowing, isAuthenticated }: FollowButtonProps) {
+export function FollowButton({
+  userId,
+  isFollowing: initialIsFollowing,
+  isAuthenticated,
+}: FollowButtonProps) {
   const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isLoading, setIsLoading] = useState(false);

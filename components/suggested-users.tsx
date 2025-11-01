@@ -37,7 +37,7 @@ export function SuggestedUsers({ users, currentUser }: SuggestedUsersProps) {
               </Avatar>
             </Link>
             <div>
-              <Link 
+              <Link
                 href={`/${currentUser.username}`}
                 className="font-semibold text-sm hover:text-gray-600"
               >
@@ -46,7 +46,10 @@ export function SuggestedUsers({ users, currentUser }: SuggestedUsersProps) {
               <p className="text-sm text-gray-500">{currentUser.name}</p>
             </div>
           </div>
-          <Button variant="ghost" className="text-blue-500 text-xs font-semibold">
+          <Button
+            variant="ghost"
+            className="text-blue-500 text-xs font-semibold"
+          >
             Switch
           </Button>
         </div>
@@ -76,7 +79,7 @@ export function SuggestedUsers({ users, currentUser }: SuggestedUsersProps) {
                 </Avatar>
               </Link>
               <div>
-                <Link 
+                <Link
                   href={`/${user.username}`}
                   className="font-semibold text-sm hover:text-gray-600"
                 >
@@ -85,8 +88,8 @@ export function SuggestedUsers({ users, currentUser }: SuggestedUsersProps) {
                 <p className="text-xs text-gray-500">Suggested for you</p>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="text-blue-500 text-xs font-semibold h-auto p-0"
             >
               Follow
@@ -98,19 +101,33 @@ export function SuggestedUsers({ users, currentUser }: SuggestedUsersProps) {
       {/* Footer */}
       <div className="mt-8 text-xs text-gray-400 space-y-2">
         <div className="flex flex-wrap gap-x-2 gap-y-1">
-          <Link href="/about" className="hover:underline">About</Link>
+          <Link href="/about" className="hover:underline">
+            About
+          </Link>
           <span>·</span>
-          <Link href="/help" className="hover:underline">Help</Link>
+          <Link href="/help" className="hover:underline">
+            Help
+          </Link>
           <span>·</span>
-          <Link href="/press" className="hover:underline">Press</Link>
+          <Link href="/press" className="hover:underline">
+            Press
+          </Link>
           <span>·</span>
-          <Link href="/api" className="hover:underline">API</Link>
+          <Link href="/api" className="hover:underline">
+            API
+          </Link>
           <span>·</span>
-          <Link href="/jobs" className="hover:underline">Jobs</Link>
+          <Link href="/jobs" className="hover:underline">
+            Jobs
+          </Link>
           <span>·</span>
-          <Link href="/privacy" className="hover:underline">Privacy</Link>
+          <Link href="/privacy" className="hover:underline">
+            Privacy
+          </Link>
           <span>·</span>
-          <Link href="/terms" className="hover:underline">Terms</Link>
+          <Link href="/terms" className="hover:underline">
+            Terms
+          </Link>
         </div>
         <p>© 2025 AURA</p>
       </div>

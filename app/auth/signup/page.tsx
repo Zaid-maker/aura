@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
@@ -57,7 +63,9 @@ export default function SignUpPage() {
       });
 
       if (result?.error) {
-        setError("Registration successful, but sign in failed. Please try signing in.");
+        setError(
+          "Registration successful, but sign in failed. Please try signing in.",
+        );
       } else {
         router.push("/");
         router.refresh();
@@ -142,7 +150,8 @@ export default function SignUpPage() {
             </form>
 
             <p className="mt-4 text-xs text-center text-gray-500">
-              By signing up, you agree to our Terms, Data Policy and Cookies Policy.
+              By signing up, you agree to our Terms, Data Policy and Cookies
+              Policy.
             </p>
           </CardContent>
         </Card>
@@ -152,7 +161,10 @@ export default function SignUpPage() {
           <CardContent className="pt-6 text-center">
             <p className="text-sm">
               Have an account?{" "}
-              <Link href="/auth/signin" className="font-semibold text-blue-500 hover:text-blue-600">
+              <Link
+                href="/auth/signin"
+                className="font-semibold text-blue-500 hover:text-blue-600"
+              >
                 Sign in
               </Link>
             </p>

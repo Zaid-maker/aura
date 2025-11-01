@@ -63,7 +63,10 @@ export default async function FollowingPage({ params }: FollowingPageProps) {
           {user.following.length > 0 ? (
             <div className="space-y-4">
               {user.following.map(({ following }) => (
-                <div key={following.id} className="flex items-center justify-between">
+                <div
+                  key={following.id}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center gap-3">
                     <Link href={`/${following.username}`}>
                       <Avatar className="h-12 w-12">
@@ -98,7 +101,9 @@ export default async function FollowingPage({ params }: FollowingPageProps) {
               ))}
             </div>
           ) : (
-            <p className="text-center text-gray-600 py-8">Not following anyone yet</p>
+            <p className="text-center text-gray-600 py-8">
+              Not following anyone yet
+            </p>
           )}
         </CardContent>
       </Card>
