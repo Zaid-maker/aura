@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "open-next build",
+    "pages:build": "next build && open-next build",
     "preview": "wrangler pages dev .open-next/worker",
     "deploy": "wrangler pages deploy .open-next/worker --project-name=aura",
     "start": "next start",
