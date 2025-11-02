@@ -60,6 +60,15 @@ export async function POST(
 
     // Sanitize and limit comment length
     const sanitizedText = sanitizeInput(text);
+    
+    // Check if sanitized text is empty (after removing malicious content)
+    if (sanitizedText.length === 0) {
+      return NextResponse.json(
+        { error: "Comment text is required" },
+        { status: 400 },
+      );
+    }
+
     if (sanitizedText.length > 2000) {
       return NextResponse.json(
         { error: "Comment is too long (max 2000 characters)" },
