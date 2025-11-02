@@ -83,6 +83,23 @@ export async function DELETE(
     const { session, headers } = protection;
     const { userId } = await params;
 
+    // Check if follow relationship exists
+    const existingFollow = await prisma.follow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: session.user.id!,
+          followingId: userId,
+        },
+      },
+    });
+
+    if (!existingFollow) {
+      return NextResponse.json(
+        { error: "You are not following this user" },
+        { status: 400 },
+      );
+    }
+
     // Delete follow relationship
     await prisma.follow.delete({
       where: {
