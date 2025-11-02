@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { UTApi } from "uploadthing/server";
+import { withAuthAndRateLimit } from "@/lib/api-protection";
 
 const utapi = new UTApi();
 
@@ -11,12 +10,14 @@ export async function DELETE(
   { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Apply authentication and rate limiting (sensitive operation)
+    const protection = await withAuthAndRateLimit(req, "sensitive");
+    if (!protection.success) {
+      return protection.response;
     }
 
+    // TypeScript now knows protection has session and headers
+    const { session, headers } = protection;
     const { postId } = await params;
 
     // Find the post and verify ownership
@@ -33,7 +34,7 @@ export async function DELETE(
     }
 
     // Check if the user owns the post
-    if (post.userId !== session.user.id) {
+    if (post.userId !== session.user?.id) {
       return NextResponse.json(
         { error: "You can only delete your own posts" },
         { status: 403 },
@@ -59,7 +60,7 @@ export async function DELETE(
       }
     }
 
-    return NextResponse.json({ message: "Post deleted successfully" });
+    return NextResponse.json({ message: "Post deleted successfully" }, { headers });
   } catch (error) {
     console.error("Error deleting post:", error);
     return NextResponse.json(
