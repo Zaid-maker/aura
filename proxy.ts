@@ -1,12 +1,12 @@
 /**
  * Next.js 16+ Proxy Configuration
- * 
+ *
  * This file implements security middleware (now called "proxy" in Next.js 16) that:
  * - Protects API routes with authentication checks
  * - Adds security headers (CSP, X-Frame-Options, etc.)
  * - Detects client IP addresses for rate limiting
  * - Routes requests based on protection requirements
- * 
+ *
  * Note: In Next.js 16+, this must export a function named "proxy" (not "middleware")
  */
 
@@ -34,7 +34,7 @@ const publicRoutes = [
 // Helper function to check if a path matches a pattern
 function matchesPattern(path: string, pattern: string): boolean {
   const regex = new RegExp(
-    "^" + pattern.replace(/\*/g, "[^/]+").replace(/\//g, "\\/") + "$"
+    "^" + pattern.replace(/\*/g, "[^/]+").replace(/\//g, "\\/") + "$",
   );
   return regex.test(path);
 }
@@ -60,15 +60,15 @@ function isPublicRoute(pathname: string): boolean {
 export function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
   const realIp = request.headers.get("x-real-ip");
-  
+
   if (forwarded) {
     return forwarded.split(",")[0].trim();
   }
-  
+
   if (realIp) {
     return realIp.trim();
   }
-  
+
   return "127.0.0.1";
 }
 
@@ -79,20 +79,20 @@ export function getClientIp(request: NextRequest): string {
 function applySecurityHeaders(response: NextResponse): void {
   // Prevent clickjacking
   response.headers.set("X-Frame-Options", "DENY");
-  
+
   // Prevent MIME type sniffing
   response.headers.set("X-Content-Type-Options", "nosniff");
-  
+
   // XSS Protection
   response.headers.set("X-XSS-Protection", "1; mode=block");
-  
+
   // Referrer Policy
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  
+
   // Content Security Policy
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; frame-ancestors 'none';"
+    "default-src 'self'; frame-ancestors 'none';",
   );
 }
 
@@ -115,7 +115,7 @@ export async function proxy(request: NextRequest) {
     if (!token) {
       return NextResponse.json(
         { error: "Unauthorized - Authentication required" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -132,7 +132,7 @@ export async function proxy(request: NextRequest) {
 
     // Apply security headers to authenticated responses
     applySecurityHeaders(response);
-    
+
     return response;
   }
 
@@ -146,7 +146,7 @@ export async function proxy(request: NextRequest) {
   // Apply security headers to all other API routes
   const response = NextResponse.next();
   applySecurityHeaders(response);
-  
+
   return response;
 }
 

@@ -56,7 +56,10 @@ export type AuthAndRateLimitResult =
   | AuthAndRateLimitFailureResult;
 
 // Get client identifier (IP or user ID)
-export function getClientIdentifier(request: NextRequest, userId?: string): string {
+export function getClientIdentifier(
+  request: NextRequest,
+  userId?: string,
+): string {
   if (userId) {
     return `user:${userId}`;
   }
@@ -64,7 +67,7 @@ export function getClientIdentifier(request: NextRequest, userId?: string): stri
   const forwarded = request.headers.get("x-forwarded-for");
   const realIp = request.headers.get("x-real-ip");
   const ip = forwarded?.split(",")[0].trim() || realIp || "127.0.0.1";
-  
+
   return `ip:${ip}`;
 }
 
@@ -75,7 +78,7 @@ export type RateLimitType = "general" | "auth" | "mutation" | "sensitive";
 export async function withRateLimit(
   request: NextRequest,
   type: RateLimitType = "general",
-  customIdentifier?: string
+  customIdentifier?: string,
 ): Promise<RateLimitResult> {
   // Select the appropriate rate limiter
   const ratelimiters = {
@@ -91,9 +94,8 @@ export async function withRateLimit(
   const identifier = customIdentifier || getClientIdentifier(request);
 
   // Check rate limit
-  const { success, limit, remaining, reset, pending } = await ratelimit.limit(
-    identifier
-  );
+  const { success, limit, remaining, reset, pending } =
+    await ratelimit.limit(identifier);
 
   // Wait for analytics if enabled
   if (pending) {
@@ -118,7 +120,7 @@ export async function withRateLimit(
           remaining: 0,
           reset,
         },
-        { status: 429, headers }
+        { status: 429, headers },
       ),
     };
   }
@@ -138,7 +140,7 @@ export async function withAuth(request: NextRequest): Promise<AuthResult> {
       success: false,
       response: NextResponse.json(
         { error: "Unauthorized - Please sign in to continue" },
-        { status: 401 }
+        { status: 401 },
       ),
     };
   }
@@ -152,7 +154,7 @@ export async function withAuth(request: NextRequest): Promise<AuthResult> {
 // Combined authentication and rate limiting
 export async function withAuthAndRateLimit(
   request: NextRequest,
-  type: RateLimitType = "mutation"
+  type: RateLimitType = "mutation",
 ): Promise<AuthAndRateLimitResult> {
   // Check authentication first
   const authResult = await withAuth(request);
@@ -165,7 +167,7 @@ export async function withAuthAndRateLimit(
   const rateLimitResult = await withRateLimit(
     request,
     type,
-    userId ? `user:${userId}` : undefined
+    userId ? `user:${userId}` : undefined,
   );
 
   if (!rateLimitResult.success) {
@@ -182,7 +184,7 @@ export async function withAuthAndRateLimit(
 // Input validation helper
 export function validateInput<T>(
   data: any,
-  schema: { [K in keyof T]: (value: any) => boolean }
+  schema: { [K in keyof T]: (value: any) => boolean },
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -213,7 +215,7 @@ export function validateMethod(request: NextRequest, allowedMethods: string[]) {
       success: false,
       response: NextResponse.json(
         { error: `Method ${request.method} not allowed` },
-        { status: 405, headers: { Allow: allowedMethods.join(", ") } }
+        { status: 405, headers: { Allow: allowedMethods.join(", ") } },
       ),
     };
   }

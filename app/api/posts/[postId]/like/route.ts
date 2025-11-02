@@ -50,7 +50,7 @@ export async function POST(
     if (existingLike) {
       return NextResponse.json(
         { error: "Already liked" },
-        { status: 400, headers }
+        { status: 400, headers },
       );
     }
 

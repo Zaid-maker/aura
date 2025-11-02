@@ -95,11 +95,11 @@ export default function SignUpPage() {
               <motion.div
                 initial={{ scale: 0.5 }}
                 animate={{ scale: 1 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 260,
                   damping: 20,
-                  delay: 0.1
+                  delay: 0.1,
                 }}
                 className="flex justify-center"
               >
@@ -212,7 +212,11 @@ export default function SignUpPage() {
                   {isLoading ? (
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                     >
                       <Sparkles className="h-5 w-5" />
                     </motion.div>

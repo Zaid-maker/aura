@@ -9,7 +9,7 @@ function getRedisInstance(): Redis {
   if (!url || !token) {
     throw new Error(
       "Missing Upstash Redis credentials. Please set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN environment variables. " +
-      "Get your credentials from: https://console.upstash.com/"
+        "Get your credentials from: https://console.upstash.com/",
     );
   }
 

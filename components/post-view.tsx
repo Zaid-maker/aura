@@ -133,9 +133,7 @@ export function PostView({ post }: PostViewProps) {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(
-      `${window.location.origin}/post/${post.id}`
-    );
+    navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`);
     toast.success("Link copied to clipboard");
   };
 
@@ -282,9 +280,7 @@ export function PostView({ post }: PostViewProps) {
               ) : (
                 post.comments.map((comment) => (
                   <div key={comment.id} className="flex gap-3">
-                    <Link
-                      href={`/${comment.user.username || comment.user.id}`}
-                    >
+                    <Link href={`/${comment.user.username || comment.user.id}`}>
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={comment.user.image || ""} />
                         <AvatarFallback>

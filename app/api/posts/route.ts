@@ -52,9 +52,7 @@ export async function GET(request: NextRequest) {
     // Format posts for frontend
     const formattedPosts = posts.map((post) => ({
       ...post,
-      isLiked: session?.user?.id
-        ? (post.likes as any[]).length > 0
-        : false,
+      isLiked: session?.user?.id ? (post.likes as any[]).length > 0 : false,
       likes: post._count.likes,
       comments: post._count.comments,
     }));
@@ -67,7 +65,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching posts:", error);
     return NextResponse.json(
       { error: "Failed to fetch posts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

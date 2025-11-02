@@ -23,7 +23,10 @@ export function MobileHeader() {
     >
       <div className="flex items-center justify-between px-4 h-14">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <Link
+          href="/"
+          className="text-2xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+        >
           Aura
         </Link>
 
