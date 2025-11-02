@@ -1,22 +1,23 @@
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withAuthAndRateLimit } from "@/lib/api-protection";
 
 export async function POST(
-  request: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Apply authentication and rate limiting
+    const protection = await withAuthAndRateLimit(req, "mutation");
+    if (!protection.success) {
+      return protection.response;
     }
 
+    // TypeScript now knows protection has session and headers
+    const { session, headers } = protection;
     const { userId } = await params;
 
-    if (session.user.id === userId) {
+    if (session.user?.id === userId) {
       return NextResponse.json(
         { error: "You cannot follow yourself" },
         { status: 400 },
@@ -32,15 +33,32 @@ export async function POST(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Check if already following
+    const existingFollow = await prisma.follow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: session.user.id!,
+          followingId: userId,
+        },
+      },
+    });
+
+    if (existingFollow) {
+      return NextResponse.json(
+        { error: "Already following this user" },
+        { status: 400 },
+      );
+    }
+
     // Create follow relationship
     await prisma.follow.create({
       data: {
-        followerId: session.user.id,
+        followerId: session.user.id!,
         followingId: userId,
       },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { headers });
   } catch (error) {
     console.error("Follow error:", error);
     return NextResponse.json(
@@ -51,29 +69,48 @@ export async function POST(
 }
 
 export async function DELETE(
-  request: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Apply authentication and rate limiting
+    const protection = await withAuthAndRateLimit(req, "mutation");
+    if (!protection.success) {
+      return protection.response;
     }
 
+    // TypeScript now knows protection has session and headers
+    const { session, headers } = protection;
     const { userId } = await params;
 
-    // Delete follow relationship
-    await prisma.follow.delete({
+    // Check if follow relationship exists
+    const existingFollow = await prisma.follow.findUnique({
       where: {
         followerId_followingId: {
-          followerId: session.user.id,
+          followerId: session.user.id!,
           followingId: userId,
         },
       },
     });
 
-    return NextResponse.json({ success: true });
+    if (!existingFollow) {
+      return NextResponse.json(
+        { error: "You are not following this user" },
+        { status: 400 },
+      );
+    }
+
+    // Delete follow relationship
+    await prisma.follow.delete({
+      where: {
+        followerId_followingId: {
+          followerId: session.user.id!,
+          followingId: userId,
+        },
+      },
+    });
+
+    return NextResponse.json({ success: true }, { headers });
   } catch (error) {
     console.error("Unfollow error:", error);
     return NextResponse.json(

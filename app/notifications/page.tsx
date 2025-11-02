@@ -19,10 +19,18 @@ export default function NotificationsPage() {
 
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="w-full">
-              <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
-              <TabsTrigger value="likes" className="flex-1">Likes</TabsTrigger>
-              <TabsTrigger value="comments" className="flex-1">Comments</TabsTrigger>
-              <TabsTrigger value="follows" className="flex-1">Follows</TabsTrigger>
+              <TabsTrigger value="all" className="flex-1">
+                All
+              </TabsTrigger>
+              <TabsTrigger value="likes" className="flex-1">
+                Likes
+              </TabsTrigger>
+              <TabsTrigger value="comments" className="flex-1">
+                Comments
+              </TabsTrigger>
+              <TabsTrigger value="follows" className="flex-1">
+                Follows
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="mt-4 space-y-2">
@@ -43,9 +51,15 @@ export default function NotificationsPage() {
                         <div className="flex-1">
                           <p className="text-sm">
                             <span className="font-semibold">user{i}</span>{" "}
-                            {i % 3 === 0 ? "started following you" : i % 3 === 1 ? "liked your post" : "commented on your post"}
+                            {i % 3 === 0
+                              ? "started following you"
+                              : i % 3 === 1
+                                ? "liked your post"
+                                : "commented on your post"}
                           </p>
-                          <p className="text-xs text-muted-foreground">2h ago</p>
+                          <p className="text-xs text-muted-foreground">
+                            2h ago
+                          </p>
                         </div>
                         {i % 3 === 0 ? (
                           <UserPlus className="h-5 w-5 text-primary" />
@@ -62,15 +76,21 @@ export default function NotificationsPage() {
             </TabsContent>
 
             <TabsContent value="likes">
-              <p className="text-center text-muted-foreground py-8">No likes yet</p>
+              <p className="text-center text-muted-foreground py-8">
+                No likes yet
+              </p>
             </TabsContent>
 
             <TabsContent value="comments">
-              <p className="text-center text-muted-foreground py-8">No comments yet</p>
+              <p className="text-center text-muted-foreground py-8">
+                No comments yet
+              </p>
             </TabsContent>
 
             <TabsContent value="follows">
-              <p className="text-center text-muted-foreground py-8">No new followers</p>
+              <p className="text-center text-muted-foreground py-8">
+                No new followers
+              </p>
             </TabsContent>
           </Tabs>
         </motion.div>

@@ -48,7 +48,11 @@ export function MobileNav() {
 
           {/* Profile */}
           <Link
-            href={session?.user?.username ? `/${session.user.username}` : "/auth/signin"}
+            href={
+              session?.user?.username
+                ? `/${session.user.username}`
+                : "/auth/signin"
+            }
             className="relative flex flex-col items-center justify-center w-14 h-14"
           >
             <motion.div
@@ -56,7 +60,8 @@ export function MobileNav() {
               whileHover={{ scale: 1.05 }}
               className={cn(
                 "relative transition-all duration-200",
-                pathname === `/${session?.user?.username}` && "ring-2 ring-primary ring-offset-2 ring-offset-background rounded-full"
+                pathname === `/${session?.user?.username}` &&
+                  "ring-2 ring-primary ring-offset-2 ring-offset-background rounded-full",
               )}
             >
               <Avatar className="h-7 w-7">
@@ -129,7 +134,7 @@ function NavItem({ icon: Icon, href, label, isActive }: NavItemProps) {
           <Icon
             className={cn(
               "h-6 w-6 transition-colors duration-200",
-              isActive ? "text-primary fill-primary" : "text-muted-foreground"
+              isActive ? "text-primary fill-primary" : "text-muted-foreground",
             )}
             strokeWidth={isActive ? 2.5 : 2}
           />

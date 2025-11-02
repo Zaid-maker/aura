@@ -56,7 +56,7 @@ export default function ExplorePage() {
 
       try {
         const response = await fetch(
-          `/api/search?q=${encodeURIComponent(searchQuery)}`
+          `/api/search?q=${encodeURIComponent(searchQuery)}`,
         );
         const data = await response.json();
         setSearchResults(data.results || []);
@@ -144,9 +144,7 @@ export default function ExplorePage() {
                                   </AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1">
-                                  <p className="font-semibold">
-                                    {result.name}
-                                  </p>
+                                  <p className="font-semibold">{result.name}</p>
                                   <p className="text-sm text-muted-foreground">
                                     @{result.username}
                                   </p>
@@ -160,9 +158,7 @@ export default function ExplorePage() {
                                   <Hash className="h-6 w-6 text-white" />
                                 </div>
                                 <div className="flex-1">
-                                  <p className="font-semibold">
-                                    {result.name}
-                                  </p>
+                                  <p className="font-semibold">{result.name}</p>
                                   <p className="text-sm text-muted-foreground">
                                     {result.postCount} posts
                                   </p>
