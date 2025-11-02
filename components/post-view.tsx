@@ -115,7 +115,7 @@ export function PostView({ post }: PostViewProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content: comment }),
+        body: JSON.stringify({ text: comment }),
       });
 
       if (response.ok) {
