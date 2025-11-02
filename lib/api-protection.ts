@@ -1,12 +1,59 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import type { Session } from "next-auth";
 import {
   generalRatelimit,
   authRatelimit,
   mutationRatelimit,
   sensitiveRatelimit,
 } from "./rate-limit";
+
+// Type definitions for protection results
+type RateLimitHeaders = {
+  "X-RateLimit-Limit": string;
+  "X-RateLimit-Remaining": string;
+  "X-RateLimit-Reset": string;
+};
+
+type RateLimitSuccessResult = {
+  success: true;
+  headers: RateLimitHeaders;
+};
+
+type RateLimitFailureResult = {
+  success: false;
+  response: NextResponse;
+};
+
+type RateLimitResult = RateLimitSuccessResult | RateLimitFailureResult;
+
+type AuthSuccessResult = {
+  success: true;
+  session: Session;
+};
+
+type AuthFailureResult = {
+  success: false;
+  response: NextResponse;
+};
+
+type AuthResult = AuthSuccessResult | AuthFailureResult;
+
+type AuthAndRateLimitSuccessResult = {
+  success: true;
+  session: Session;
+  headers: RateLimitHeaders;
+};
+
+type AuthAndRateLimitFailureResult = {
+  success: false;
+  response: NextResponse;
+};
+
+export type AuthAndRateLimitResult =
+  | AuthAndRateLimitSuccessResult
+  | AuthAndRateLimitFailureResult;
 
 // Get client identifier (IP or user ID)
 export function getClientIdentifier(request: NextRequest, userId?: string): string {
@@ -29,7 +76,7 @@ export async function withRateLimit(
   request: NextRequest,
   type: RateLimitType = "general",
   customIdentifier?: string
-) {
+): Promise<RateLimitResult> {
   // Select the appropriate rate limiter
   const ratelimiters = {
     general: generalRatelimit,
@@ -83,7 +130,7 @@ export async function withRateLimit(
 }
 
 // Verify authentication for protected routes
-export async function withAuth(request: NextRequest) {
+export async function withAuth(request: NextRequest): Promise<AuthResult> {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -106,7 +153,7 @@ export async function withAuth(request: NextRequest) {
 export async function withAuthAndRateLimit(
   request: NextRequest,
   type: RateLimitType = "mutation"
-) {
+): Promise<AuthAndRateLimitResult> {
   // Check authentication first
   const authResult = await withAuth(request);
   if (!authResult.success) {

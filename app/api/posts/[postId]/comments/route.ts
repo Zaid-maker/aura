@@ -38,15 +38,14 @@ export async function POST(
   { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
-    // Apply authentication and rate limiting (20 comments per minute)
+    // Apply authentication and rate limiting
     const protection = await withAuthAndRateLimit(req, "mutation");
     if (!protection.success) {
-      return protection.response!;
+      return protection.response;
     }
 
-    const session = protection.session!;
-    const headers = protection.headers || {};
-
+    // TypeScript now knows protection has session and headers
+    const { session, headers } = protection;
     const { postId } = await params;
     const body = await req.json();
     const { text } = body;

@@ -12,11 +12,11 @@ export async function POST(
     // Apply authentication and rate limiting
     const protection = await withAuthAndRateLimit(req, "mutation");
     if (!protection.success) {
-      return protection.response!;
+      return protection.response;
     }
 
-    const session = protection.session!;
-    const headers = protection.headers || {};
+    // TypeScript now knows protection has session and headers
+    const { session, headers } = protection;
     const { postId } = await params;
 
     const user = await prisma.user.findUnique({
@@ -80,11 +80,11 @@ export async function DELETE(
     // Apply authentication and rate limiting
     const protection = await withAuthAndRateLimit(req, "mutation");
     if (!protection.success) {
-      return protection.response!;
+      return protection.response;
     }
 
-    const session = protection.session!;
-    const headers = protection.headers || {};
+    // TypeScript now knows protection has session and headers
+    const { session, headers } = protection;
     const { postId } = await params;
 
     const user = await prisma.user.findUnique({
