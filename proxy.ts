@@ -72,6 +72,30 @@ export function getClientIp(request: NextRequest): string {
   return "127.0.0.1";
 }
 
+/**
+ * Apply security headers to a NextResponse
+ * Hardens all API responses against common vulnerabilities
+ */
+function applySecurityHeaders(response: NextResponse): void {
+  // Prevent clickjacking
+  response.headers.set("X-Frame-Options", "DENY");
+  
+  // Prevent MIME type sniffing
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  
+  // XSS Protection
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  
+  // Referrer Policy
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  
+  // Content Security Policy
+  response.headers.set(
+    "Content-Security-Policy",
+    "default-src 'self'; frame-ancestors 'none';"
+  );
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -100,39 +124,29 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set("x-user-id", token.sub || "");
     requestHeaders.set("x-user-email", token.email || "");
 
-    return NextResponse.next({
+    const response = NextResponse.next({
       request: {
         headers: requestHeaders,
       },
     });
+
+    // Apply security headers to authenticated responses
+    applySecurityHeaders(response);
+    
+    return response;
   }
 
   // Skip middleware for public routes (checked AFTER protected routes)
   if (isPublicRoute(pathname)) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    applySecurityHeaders(response);
+    return response;
   }
 
-  // Security headers for all API routes
+  // Apply security headers to all other API routes
   const response = NextResponse.next();
+  applySecurityHeaders(response);
   
-  // Prevent clickjacking
-  response.headers.set("X-Frame-Options", "DENY");
-  
-  // Prevent MIME type sniffing
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  
-  // XSS Protection
-  response.headers.set("X-XSS-Protection", "1; mode=block");
-  
-  // Referrer Policy
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  
-  // Content Security Policy
-  response.headers.set(
-    "Content-Security-Policy",
-    "default-src 'self'; frame-ancestors 'none';"
-  );
-
   return response;
 }
 
