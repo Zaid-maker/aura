@@ -46,7 +46,14 @@ function isProtectedRoute(pathname: string): boolean {
 
 // Helper function to check if route is public
 function isPublicRoute(pathname: string): boolean {
-  return publicRoutes.some((route) => pathname.startsWith(route));
+  return publicRoutes.some((route) => {
+    if (route === "/api/posts") {
+      // Exact match for /api/posts or /api/posts with query params only
+      // This prevents /api/posts/123/like from being treated as public
+      return pathname === "/api/posts" || pathname.startsWith("/api/posts?");
+    }
+    return pathname.startsWith(route);
+  });
 }
 
 // Get client IP address
@@ -73,12 +80,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Skip middleware for public routes
-  if (isPublicRoute(pathname)) {
-    return NextResponse.next();
-  }
-
-  // Check authentication for protected routes
+  // Check authentication for protected routes FIRST (before public route check)
+  // This prevents routes like /api/posts/123/like from being treated as public
   if (isProtectedRoute(pathname)) {
     const token = await getToken({
       req: request,
@@ -102,6 +105,11 @@ export async function proxy(request: NextRequest) {
         headers: requestHeaders,
       },
     });
+  }
+
+  // Skip middleware for public routes (checked AFTER protected routes)
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next();
   }
 
   // Security headers for all API routes
