@@ -98,6 +98,7 @@ function applySecurityHeaders(response: NextResponse): void {
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const method = request.method;
 
   // Only process API routes
   if (!pathname.startsWith("/api")) {
@@ -106,7 +107,12 @@ export async function proxy(request: NextRequest) {
 
   // Check authentication for protected routes FIRST (before public route check)
   // This prevents routes like /api/posts/123/like from being treated as public
-  if (isProtectedRoute(pathname)) {
+  // Note: GET requests to /api/posts/*/comments are public (viewing comments)
+  // but POST requests require authentication (creating comments)
+  const isProtected = isProtectedRoute(pathname);
+  const isCommentsGetRequest = pathname.match(/\/api\/posts\/[^/]+\/comments$/) && method === "GET";
+  
+  if (isProtected && !isCommentsGetRequest) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
