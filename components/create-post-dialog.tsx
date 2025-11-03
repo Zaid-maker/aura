@@ -50,6 +50,8 @@ export function CreatePostDialog({
         setCaption("");
         onOpenChange(false);
         toast.success("Post created successfully");
+        // Navigate to home page and refresh to show the new post
+        router.push("/");
         router.refresh();
       } else {
         toast.error("Failed to create post");
