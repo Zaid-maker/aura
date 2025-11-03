@@ -110,8 +110,8 @@ export default async function Home() {
     <div className="flex min-h-screen bg-gray-50 dark:bg-black">
       <main className="flex-1 flex justify-center px-4 py-8">
         <div className="w-full max-w-[630px] space-y-6">
-          {/* Stories Bar */}
-          {stories.length > 0 && <StoriesBar stories={stories} />}
+          {/* Stories Bar - Always show so users can create stories */}
+          <StoriesBar stories={stories} />
 
           {/* Posts Feed with Infinite Scroll */}
           <InfiniteScrollFeed
