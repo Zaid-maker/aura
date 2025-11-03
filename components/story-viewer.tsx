@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface Story {
   id: string;
@@ -102,6 +103,9 @@ export function StoryViewer({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[500px] h-[90vh] p-0 bg-black border-none">
+        <VisuallyHidden>
+          <DialogTitle>{userName}&apos;s Story</DialogTitle>
+        </VisuallyHidden>
         <div className="relative w-full h-full">
           {/* Progress bars */}
           <div className="absolute top-0 left-0 right-0 z-20 flex gap-1 p-2">
