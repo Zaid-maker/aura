@@ -7,7 +7,17 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = req.nextUrl;
     const cursor = searchParams.get("cursor");
-    const limit = parseInt(searchParams.get("limit") || "10");
+    
+    // Sanitize and validate limit parameter
+    const rawLimit = searchParams.get("limit");
+    let limit = parseInt(rawLimit || "10", 10);
+    
+    // Handle NaN, negative, zero, or excessively large values
+    if (isNaN(limit) || limit < 1) {
+      limit = 10; // Default to 10
+    } else if (limit > 100) {
+      limit = 100; // Cap at 100
+    }
 
     const session = await getServerSession(authOptions);
 
