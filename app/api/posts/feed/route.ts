@@ -44,6 +44,21 @@ export async function GET(req: NextRequest) {
       userFollowing = user?.following.map((follow) => follow.followingId) || [];
     }
 
+    // Validate cursor if provided
+    if (cursor) {
+      const cursorPost = await prisma.post.findUnique({
+        where: { id: cursor },
+        select: { id: true },
+      });
+
+      if (!cursorPost) {
+        return NextResponse.json(
+          { error: "Invalid or stale cursor" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Fetch posts with cursor-based pagination
     const posts = await prisma.post.findMany({
       take: limit + 1, // Take one extra to determine if there are more posts
