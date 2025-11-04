@@ -14,11 +14,14 @@ export async function POST(req: NextRequest) {
     const { session, headers } = protection;
 
     const user = await prisma.user.findUnique({
-      where: { email: session.user?.email! },
+      where: { id: session.user.id },
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404, headers }
+      );
     }
 
     const body = await req.json();

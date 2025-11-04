@@ -45,7 +45,7 @@ export function Story({ story, hasStory = true, onClick }: StoryProps) {
   // If onClick is provided, use a button instead of Link
   if (onClick) {
     return (
-      <button onClick={onClick} className="cursor-pointer">
+      <button type="button" onClick={onClick} className="cursor-pointer">
         {content}
       </button>
     );
