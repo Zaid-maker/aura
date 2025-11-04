@@ -14,14 +14,12 @@ interface StoryProps {
     };
   };
   hasStory?: boolean;
+  onClick?: () => void; // Optional click handler
 }
 
-export function Story({ story, hasStory = true }: StoryProps) {
-  return (
-    <Link
-      href={`/stories/${story.user.username}`}
-      className="flex flex-col items-center gap-1"
-    >
+export function Story({ story, hasStory = true, onClick }: StoryProps) {
+  const content = (
+    <div className="flex flex-col items-center gap-1">
       <div
         className={`rounded-full p-0.5 ${
           hasStory
@@ -41,6 +39,24 @@ export function Story({ story, hasStory = true }: StoryProps) {
       <span className="text-xs truncate max-w-[70px] dark:text-gray-300">
         {story.user.username || story.user.name}
       </span>
+    </div>
+  );
+
+  // If onClick is provided, use a button instead of Link
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className="cursor-pointer">
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      href={`/stories/${story.user.username}`}
+      className="flex flex-col items-center gap-1"
+    >
+      {content}
     </Link>
   );
 }

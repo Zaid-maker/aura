@@ -21,6 +21,8 @@ const protectedRoutes = [
   "/api/posts/*/like",
   "/api/posts/*/comments",
   "/api/users/*/follow",
+  "/api/stories", // POST to create story requires auth, GET is public
+  "/api/stories/*", // POST to specific story endpoints requires auth, GET is public
 ];
 
 // Define public routes that don't require authentication
@@ -107,12 +109,13 @@ export async function proxy(request: NextRequest) {
 
   // Check authentication for protected routes FIRST (before public route check)
   // This prevents routes like /api/posts/123/like from being treated as public
-  // Note: GET requests to /api/posts/*/comments are public (viewing comments)
-  // but POST requests require authentication (creating comments)
+  // Note: GET requests to /api/posts/*/comments and /api/stories/* are public (viewing)
+  // but POST requests require authentication (creating)
   const isProtected = isProtectedRoute(pathname);
   const isCommentsGetRequest = pathname.match(/\/api\/posts\/[^/]+\/comments$/) && method === "GET";
+  const isStoriesGetRequest = (pathname === "/api/stories" || pathname.match(/\/api\/stories\/[^/]+$/)) && method === "GET";
   
-  if (isProtected && !isCommentsGetRequest) {
+  if (isProtected && !isCommentsGetRequest && !isStoriesGetRequest) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,

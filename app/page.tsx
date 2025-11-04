@@ -1,6 +1,7 @@
 import { Post } from "@/components/post";
 import { StoriesBar } from "@/components/stories-bar";
 import { SuggestedUsers } from "@/components/suggested-users";
+import { InfiniteScrollFeed } from "@/components/infinite-scroll-feed";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -31,8 +32,10 @@ export default async function Home() {
     userFollowing = user?.following.map((follow) => follow.followingId) || [];
   }
 
-  // Fetch posts with user data, likes, and comments count
+  // Fetch initial batch of posts (10 posts)
+  const initialLimit = 10;
   const posts = await prisma.post.findMany({
+    take: initialLimit + 1, // Take one extra to check if there are more
     include: {
       user: {
         select: {
@@ -52,8 +55,22 @@ export default async function Home() {
     orderBy: {
       createdAt: "desc",
     },
-    take: 20,
   });
+
+  // Determine if there are more posts
+  let initialCursor: string | undefined = undefined;
+  let initialPosts = posts;
+  if (posts.length > initialLimit) {
+    const nextItem = posts.pop(); // Remove the extra item
+    initialCursor = nextItem!.id;
+  }
+
+  // Add user interaction data to posts
+  const postsWithUserData = initialPosts.map((post) => ({
+    ...post,
+    isLiked: userLikes.includes(post.id),
+    isFollowing: userFollowing.includes(post.user.id),
+  }));
 
   // Fetch recent stories (not expired)
   const stories = await prisma.story.findMany({
@@ -93,34 +110,14 @@ export default async function Home() {
     <div className="flex min-h-screen bg-gray-50 dark:bg-black">
       <main className="flex-1 flex justify-center px-4 py-8">
         <div className="w-full max-w-[630px] space-y-6">
-          {/* Stories Bar */}
-          {stories.length > 0 && <StoriesBar stories={stories} />}
+          {/* Stories Bar - Always show so users can create stories */}
+          <StoriesBar stories={stories} />
 
-          {/* Posts Feed */}
-          <div className="space-y-6">
-            {posts.length > 0 ? (
-              posts.map((post) => (
-                <Post
-                  key={post.id}
-                  post={{
-                    ...post,
-                    createdAt: post.createdAt,
-                  }}
-                  isLiked={userLikes.includes(post.id)}
-                  isFollowing={userFollowing.includes(post.user.id)}
-                />
-              ))
-            ) : (
-              <div className="text-center py-12">
-                <h2 className="text-2xl font-semibold mb-2">
-                  Welcome to Aura! 🌟
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Start following people to see their posts and build your aura.
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Posts Feed with Infinite Scroll */}
+          <InfiniteScrollFeed
+            initialPosts={postsWithUserData}
+            initialCursor={initialCursor}
+          />
         </div>
 
         {/* Suggested Users Sidebar */}
