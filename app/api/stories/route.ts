@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     if (!imageUrl) {
       return NextResponse.json(
         { error: "Image URL is required" },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 

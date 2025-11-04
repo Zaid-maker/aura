@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     
     // Check if authorized by either method
     const isAuthorizedBySecret = cronSecret && authHeader === `Bearer ${cronSecret}`;
-    const isAuthorizedByVercel = vercelCronHeader && vercelCronHeader.length > 0;
+    const isAuthorizedByVercel = vercelCronHeader === "1"; // Exact match to prevent spoofing
     
     if (!isAuthorizedBySecret && !isAuthorizedByVercel) {
       return NextResponse.json(
