@@ -9,6 +9,7 @@ import type { Notification, NotificationResponse } from "@/types/notifications";
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -30,8 +31,16 @@ export default function NotificationsPage() {
           
           if (cursor) {
             setNotifications((prev) => [...prev, ...data.notifications]);
+            // Update total count when loading more on "all" tab
+            if (!unreadOnly) {
+              setTotalCount((prev) => prev + data.notifications.length);
+            }
           } else {
             setNotifications(data.notifications);
+            // Set initial total count when fetching "all" tab
+            if (!unreadOnly) {
+              setTotalCount(data.notifications.length);
+            }
           }
           
           setUnreadCount(data.unreadCount);
@@ -116,7 +125,7 @@ export default function NotificationsPage() {
       >
         <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="all">
-            All {notifications.length > 0 && `(${notifications.length})`}
+            All {totalCount > 0 && `(${totalCount})`}
           </TabsTrigger>
           <TabsTrigger value="unread">
             Unread {unreadCount > 0 && `(${unreadCount})`}
