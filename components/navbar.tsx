@@ -23,10 +23,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/mode-toggle";
 import { CreatePostDialog } from "@/components/create-post-dialog";
+import { NavbarSkeleton } from "@/components/navbar-skeleton";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [createPostOpen, setCreatePostOpen] = useState(false);
 
   const isActive = (path: string) => {
@@ -36,6 +37,11 @@ export function Navbar() {
   // Don't show navbar on auth pages
   if (pathname?.startsWith("/auth")) {
     return null;
+  }
+
+  // Show skeleton while loading session
+  if (status === "loading") {
+    return <NavbarSkeleton />;
   }
 
   return (
