@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { withAuthAndRateLimit, sanitizeInput } from "@/lib/api-protection";
+import { createNotification } from "@/lib/notifications";
 
 // Get comments for a post
 export async function GET(
@@ -84,13 +85,22 @@ export async function POST(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Verify post exists
-    const postExists = await prisma.post.findUnique({
+    // Verify post exists and get post owner
+    const post = await prisma.post.findUnique({
       where: { id: postId },
-      select: { id: true },
+      select: { 
+        id: true,
+        userId: true,
+        user: {
+          select: {
+            username: true,
+            name: true,
+          },
+        },
+      },
     });
 
-    if (!postExists) {
+    if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
@@ -103,6 +113,16 @@ export async function POST(
       include: {
         user: true,
       },
+    });
+
+    // Create notification for post owner
+    await createNotification({
+      type: "COMMENT",
+      userId: post.userId,
+      actorId: user.id,
+      message: `${user.username || user.name || "Someone"} commented on your post`,
+      postId: postId,
+      commentId: comment.id,
     });
 
     // Return with rate limit headers

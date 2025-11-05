@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { withAuthAndRateLimit } from "@/lib/api-protection";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(
   req: NextRequest,
@@ -56,6 +57,14 @@ export async function POST(
         followerId: session.user.id!,
         followingId: userId,
       },
+    });
+
+    // Create notification for the user being followed
+    await createNotification({
+      type: "FOLLOW",
+      userId: userId,
+      actorId: session.user.id!,
+      message: `${session.user.username || session.user.name || "Someone"} started following you`,
     });
 
     return NextResponse.json({ success: true }, { headers });

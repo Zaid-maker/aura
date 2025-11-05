@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { withAuthAndRateLimit } from "@/lib/api-protection";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(
   req: NextRequest,
@@ -27,13 +28,22 @@ export async function POST(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Verify post exists
-    const postExists = await prisma.post.findUnique({
+    // Verify post exists and get post owner
+    const post = await prisma.post.findUnique({
       where: { id: postId },
-      select: { id: true },
+      select: { 
+        id: true,
+        userId: true,
+        user: {
+          select: {
+            username: true,
+            name: true,
+          },
+        },
+      },
     });
 
-    if (!postExists) {
+    if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
@@ -60,6 +70,15 @@ export async function POST(
         userId: user.id,
         postId: postId,
       },
+    });
+
+    // Create notification for post owner
+    await createNotification({
+      type: "LIKE",
+      userId: post.userId,
+      actorId: user.id,
+      message: `${user.username || user.name || "Someone"} liked your post`,
+      postId: postId,
     });
 
     return NextResponse.json({ success: true }, { headers });

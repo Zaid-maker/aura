@@ -1,100 +1,195 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Heart, MessageCircle, UserPlus } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useState, useCallback } from "react";
+import { NotificationItem } from "@/components/notification-item";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+type NotificationType = "LIKE" | "COMMENT" | "FOLLOW" | "MENTION" | "STORY_VIEW";
+
+interface Notification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  actor: {
+    id: string;
+    username: string | null;
+    name: string | null;
+    image: string | null;
+  } | null;
+  postId?: string | null;
+  commentId?: string | null;
+}
+
+interface NotificationResponse {
+  notifications: Notification[];
+  nextCursor: string | null;
+  unreadCount: number;
+}
+
 export default function NotificationsPage() {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
+
+  const fetchNotifications = useCallback(
+    async (cursor?: string, unreadOnly = false) => {
+      try {
+        setIsLoading(true);
+        const params = new URLSearchParams({
+          limit: "20",
+          ...(cursor && { cursor }),
+          ...(unreadOnly && { unreadOnly: "true" }),
+        });
+
+        const response = await fetch(`/api/notifications?${params}`);
+        if (response.ok) {
+          const data: NotificationResponse = await response.json();
+          
+          if (cursor) {
+            setNotifications((prev) => [...prev, ...data.notifications]);
+          } else {
+            setNotifications(data.notifications);
+          }
+          
+          setUnreadCount(data.unreadCount);
+          setNextCursor(data.nextCursor);
+          setHasMore(!!data.nextCursor);
+        }
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    fetchNotifications(undefined, activeTab === "unread");
+  }, [fetchNotifications, activeTab]);
+
+  const handleMarkAsRead = async (notificationId: string) => {
+    try {
+      const response = await fetch("/api/notifications/mark-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationIds: [notificationId] }),
+      });
+
+      if (response.ok) {
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const response = await fetch("/api/notifications/mark-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ markAll: true }),
+      });
+
+      if (response.ok) {
+        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+        setUnreadCount(0);
+      }
+    } catch (error) {
+      console.error("Failed to mark all as read:", error);
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (nextCursor && !isLoading) {
+      fetchNotifications(nextCursor, activeTab === "unread");
+    }
+  };
+
+  const displayedNotifications =
+    activeTab === "unread"
+      ? notifications.filter((n) => !n.read)
+      : notifications;
+
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <div className="mx-auto max-w-2xl px-4 py-4 md:py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <h1 className="text-2xl font-bold mb-6">Notifications</h1>
-
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="w-full">
-              <TabsTrigger value="all" className="flex-1">
-                All
-              </TabsTrigger>
-              <TabsTrigger value="likes" className="flex-1">
-                Likes
-              </TabsTrigger>
-              <TabsTrigger value="comments" className="flex-1">
-                Comments
-              </TabsTrigger>
-              <TabsTrigger value="follows" className="flex-1">
-                Follows
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="all" className="mt-4 space-y-2">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="" />
-                          <AvatarFallback>U</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <p className="text-sm">
-                            <span className="font-semibold">user{i}</span>{" "}
-                            {i % 3 === 0
-                              ? "started following you"
-                              : i % 3 === 1
-                                ? "liked your post"
-                                : "commented on your post"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            2h ago
-                          </p>
-                        </div>
-                        {i % 3 === 0 ? (
-                          <UserPlus className="h-5 w-5 text-primary" />
-                        ) : i % 3 === 1 ? (
-                          <Heart className="h-5 w-5 text-red-500 fill-red-500" />
-                        ) : (
-                          <MessageCircle className="h-5 w-5 text-blue-500" />
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </TabsContent>
-
-            <TabsContent value="likes">
-              <p className="text-center text-muted-foreground py-8">
-                No likes yet
-              </p>
-            </TabsContent>
-
-            <TabsContent value="comments">
-              <p className="text-center text-muted-foreground py-8">
-                No comments yet
-              </p>
-            </TabsContent>
-
-            <TabsContent value="follows">
-              <p className="text-center text-muted-foreground py-8">
-                No new followers
-              </p>
-            </TabsContent>
-          </Tabs>
-        </motion.div>
+    <div className="mx-auto max-w-2xl px-4 py-8">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Notifications</h1>
+        {unreadCount > 0 && (
+          <Button onClick={handleMarkAllAsRead} variant="outline" size="sm">
+            Mark all as read
+          </Button>
+        )}
       </div>
+
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as "all" | "unread")}
+        className="w-full"
+      >
+        <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsTrigger value="all">
+            All {notifications.length > 0 && `(${notifications.length})`}
+          </TabsTrigger>
+          <TabsTrigger value="unread">
+            Unread {unreadCount > 0 && `(${unreadCount})`}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={activeTab} className="mt-0">
+          {isLoading && notifications.length === 0 ? (
+            <div className="flex items-center justify-center h-64">
+              <p className="text-muted-foreground">Loading notifications...</p>
+            </div>
+          ) : displayedNotifications.length === 0 ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <p className="text-muted-foreground mb-2">
+                  {activeTab === "unread"
+                    ? "No unread notifications"
+                    : "No notifications yet"}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {activeTab === "all" &&
+                    "When someone likes or comments on your posts, you'll see it here"}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-card rounded-lg border divide-y">
+              {displayedNotifications.map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  {...notification}
+                  onMarkAsRead={handleMarkAsRead}
+                />
+              ))}
+            </div>
+          )}
+
+          {hasMore && displayedNotifications.length > 0 && (
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={handleLoadMore}
+                variant="outline"
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Load more"}
+              </Button>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
