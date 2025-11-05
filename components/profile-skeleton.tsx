@@ -42,7 +42,7 @@ export function ProfilePageSkeleton() {
       <main className="flex-1 flex justify-center px-4 py-8">
         <div className="w-full max-w-[935px] space-y-6">
           <ProfileHeaderSkeleton />
-          
+
           {/* Tabs */}
           <div className="border-t border-gray-200 dark:border-zinc-900">
             <div className="flex justify-center gap-12 py-3">

@@ -45,7 +45,7 @@ export function InfiniteScrollFeed({
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/posts/feed?limit=10${cursor ? `&cursor=${cursor}` : ""}`
+        `/api/posts/feed?limit=10${cursor ? `&cursor=${cursor}` : ""}`,
       );
       const data = await response.json();
 
@@ -70,7 +70,7 @@ export function InfiniteScrollFeed({
           loadMorePosts();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     const currentTarget = observerTarget.current;
@@ -88,9 +88,7 @@ export function InfiniteScrollFeed({
   if (posts.length === 0) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-semibold mb-2">
-          Welcome to Aura! 🌟
-        </h2>
+        <h2 className="text-2xl font-semibold mb-2">Welcome to Aura! 🌟</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Start following people to see their posts and build your aura.
         </p>

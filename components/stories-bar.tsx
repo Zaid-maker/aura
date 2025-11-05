@@ -66,10 +66,10 @@ export function StoriesBar({ stories }: StoriesBarProps) {
 
           {/* Existing Stories */}
           {stories.map((story) => (
-            <Story 
-              key={story.id} 
-              story={story} 
-              hasStory 
+            <Story
+              key={story.id}
+              story={story}
+              hasStory
               onClick={() => handleStoryClick(story)}
             />
           ))}
