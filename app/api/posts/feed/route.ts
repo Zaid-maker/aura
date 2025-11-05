@@ -7,11 +7,11 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = req.nextUrl;
     const cursor = searchParams.get("cursor");
-    
+
     // Sanitize and validate limit parameter
     const rawLimit = searchParams.get("limit");
     let limit = parseInt(rawLimit || "10", 10);
-    
+
     // Handle NaN, negative, zero, or excessively large values
     if (isNaN(limit) || limit < 1) {
       limit = 10; // Default to 10
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       if (!cursorPost) {
         return NextResponse.json(
           { error: "Invalid or stale cursor" },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -111,7 +111,7 @@ export async function GET(req: NextRequest) {
     console.error("Error fetching feed:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -112,9 +112,12 @@ export async function proxy(request: NextRequest) {
   // Note: GET requests to /api/posts/*/comments and /api/stories/* are public (viewing)
   // but POST requests require authentication (creating)
   const isProtected = isProtectedRoute(pathname);
-  const isCommentsGetRequest = pathname.match(/\/api\/posts\/[^/]+\/comments$/) && method === "GET";
-  const isStoriesGetRequest = (pathname === "/api/stories" || pathname.match(/\/api\/stories\/[^/]+$/)) && method === "GET";
-  
+  const isCommentsGetRequest =
+    pathname.match(/\/api\/posts\/[^/]+\/comments$/) && method === "GET";
+  const isStoriesGetRequest =
+    (pathname === "/api/stories" || pathname.match(/\/api\/stories\/[^/]+$/)) &&
+    method === "GET";
+
   if (isProtected && !isCommentsGetRequest && !isStoriesGetRequest) {
     const token = await getToken({
       req: request,

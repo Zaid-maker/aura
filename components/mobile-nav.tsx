@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { MobileNavSkeleton } from "@/components/navbar-skeleton";
 
 const navItems = [
   { icon: Home, href: "/", label: "Home" },
@@ -17,7 +18,12 @@ const navItems = [
 
 export function MobileNav() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  // Show skeleton while loading session
+  if (status === "loading") {
+    return <MobileNavSkeleton />;
+  }
 
   return (
     <>

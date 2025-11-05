@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     const { userId } = await params;
@@ -35,7 +35,7 @@ export async function GET(
     console.error("Error fetching user stories:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

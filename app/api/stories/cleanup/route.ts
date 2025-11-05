@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
  * Cleanup expired stories
  * This endpoint can be called by a cron job (e.g., Vercel Cron)
  * to delete stories that have expired (older than 24 hours)
- * 
+ *
  * In production, set up a cron job to call this endpoint:
  * - Add to vercel.json:
  *   {
@@ -14,7 +14,7 @@ import { prisma } from "@/lib/prisma";
  *       "schedule": "0 0 * * *"
  *     }]
  *   }
- * 
+ *
  * This runs once per day at midnight UTC (compatible with Vercel Hobby plan).
  * Expired stories won't appear in queries due to expiresAt filtering,
  * so daily cleanup is sufficient for database maintenance.
@@ -25,16 +25,14 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get("authorization");
     const vercelCronHeader = req.headers.get("x-vercel-cron");
     const cronSecret = process.env.CRON_SECRET;
-    
+
     // Check if authorized by either method
-    const isAuthorizedBySecret = cronSecret && authHeader === `Bearer ${cronSecret}`;
+    const isAuthorizedBySecret =
+      cronSecret && authHeader === `Bearer ${cronSecret}`;
     const isAuthorizedByVercel = vercelCronHeader === "1"; // Exact match to prevent spoofing
-    
+
     if (!isAuthorizedBySecret && !isAuthorizedByVercel) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Delete expired stories in batches to avoid timeouts
@@ -91,7 +89,7 @@ export async function POST(req: NextRequest) {
     console.error("Error cleaning up stories:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,7 +113,7 @@ export async function GET(req: NextRequest) {
     console.error("Error checking expired stories:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

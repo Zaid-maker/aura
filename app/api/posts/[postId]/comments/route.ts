@@ -60,7 +60,7 @@ export async function POST(
 
     // Sanitize and limit comment length
     const sanitizedText = sanitizeInput(text);
-    
+
     // Check if sanitized text is empty (after removing malicious content)
     if (sanitizedText.length === 0) {
       return NextResponse.json(
