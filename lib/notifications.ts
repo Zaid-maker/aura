@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
-export type NotificationType = "LIKE" | "COMMENT" | "FOLLOW" | "MENTION" | "STORY_VIEW";
+import type { NotificationType } from "@/types/notifications";
 
 interface CreateNotificationParams {
   type: NotificationType;

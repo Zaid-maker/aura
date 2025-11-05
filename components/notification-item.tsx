@@ -4,8 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Heart, MessageCircle, UserPlus, Eye } from "lucide-react";
-
-type NotificationType = "LIKE" | "COMMENT" | "FOLLOW" | "MENTION" | "STORY_VIEW";
+import type { NotificationType, NotificationActor } from "@/types/notifications";
 
 interface NotificationItemProps {
   id: string;
@@ -13,12 +12,7 @@ interface NotificationItemProps {
   message: string;
   read: boolean;
   createdAt: string;
-  actor: {
-    id: string;
-    username: string | null;
-    name: string | null;
-    image: string | null;
-  } | null;
+  actor: NotificationActor | null;
   postId?: string | null;
   onMarkAsRead?: (id: string) => void;
 }

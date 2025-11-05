@@ -4,30 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { NotificationItem } from "@/components/notification-item";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-type NotificationType = "LIKE" | "COMMENT" | "FOLLOW" | "MENTION" | "STORY_VIEW";
-
-interface Notification {
-  id: string;
-  type: NotificationType;
-  message: string;
-  read: boolean;
-  createdAt: string;
-  actor: {
-    id: string;
-    username: string | null;
-    name: string | null;
-    image: string | null;
-  } | null;
-  postId?: string | null;
-  commentId?: string | null;
-}
-
-interface NotificationResponse {
-  notifications: Notification[];
-  nextCursor: string | null;
-  unreadCount: number;
-}
+import type { Notification, NotificationResponse } from "@/types/notifications";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
