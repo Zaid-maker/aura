@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Post } from "@/components/post";
+import { PostSkeletonList } from "@/components/post-skeleton";
 import { Loader2 } from "lucide-react";
 
 interface PostData {
@@ -111,17 +112,11 @@ export function InfiniteScrollFeed({
         />
       ))}
 
-      {/* Loading indicator and intersection observer target */}
-      <div
-        ref={observerTarget}
-        className="flex justify-center py-8"
-      >
-        {loading && (
-          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            <span>Loading more posts...</span>
-          </div>
-        )}
+      {/* Loading skeletons */}
+      {loading && <PostSkeletonList count={2} />}
+
+      {/* Intersection observer target and end message */}
+      <div ref={observerTarget} className="flex justify-center py-8">
         {!hasMore && posts.length > 0 && (
           <p className="text-gray-500 dark:text-gray-500">
             You've reached the end! 🎉
