@@ -160,7 +160,7 @@ export default function NotificationsPage() {
             </div>
           )}
 
-          {hasMore && displayedNotifications.length > 0 && (
+          {hasMore && (
             <div className="flex justify-center mt-6">
               <Button
                 onClick={handleLoadMore}
