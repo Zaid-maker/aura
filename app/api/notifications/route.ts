@@ -63,11 +63,10 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Get total count (respects unreadOnly filter)
+    // Get total count (unconditional - always returns all notifications for user)
     const totalCount = await prisma.notification.count({
       where: {
         userId: session.user.id,
-        ...(unreadOnly && { read: false }),
       },
     });
 
