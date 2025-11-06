@@ -27,4 +27,5 @@ export interface NotificationResponse {
   notifications: Notification[];
   nextCursor: string | null;
   unreadCount: number;
+  totalCount: number;
 }

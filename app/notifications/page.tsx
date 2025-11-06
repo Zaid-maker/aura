@@ -31,19 +31,13 @@ export default function NotificationsPage() {
           
           if (cursor) {
             setNotifications((prev) => [...prev, ...data.notifications]);
-            // Update total count when loading more on "all" tab
-            if (!unreadOnly) {
-              setTotalCount((prev) => prev + data.notifications.length);
-            }
           } else {
             setNotifications(data.notifications);
-            // Set initial total count when fetching "all" tab
-            if (!unreadOnly) {
-              setTotalCount(data.notifications.length);
-            }
           }
           
+          // Always use server-provided counts
           setUnreadCount(data.unreadCount);
+          setTotalCount(data.totalCount);
           setNextCursor(data.nextCursor);
           setHasMore(!!data.nextCursor);
         }
