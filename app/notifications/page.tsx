@@ -51,6 +51,9 @@ export default function NotificationsPage() {
   );
 
   useEffect(() => {
+    // Reset pagination state when switching tabs
+    setNextCursor(null);
+    setHasMore(true);
     fetchNotifications(undefined, activeTab === "unread");
   }, [fetchNotifications, activeTab]);
 
