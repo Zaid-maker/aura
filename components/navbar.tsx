@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  Heart,
   Home,
   MessageCircle,
   PlusSquare,
@@ -24,6 +23,7 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import { CreatePostDialog } from "@/components/create-post-dialog";
 import { NavbarSkeleton } from "@/components/navbar-skeleton";
+import { NotificationDropdown } from "@/components/notification-dropdown";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -104,15 +104,7 @@ export function Navbar() {
                     </Button>
                   </Link>
 
-                  <Link href="/notifications">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hover:bg-transparent"
-                    >
-                      <Heart className="h-6 w-6" />
-                    </Button>
-                  </Link>
+                  <NotificationDropdown />
 
                   <Button
                     variant="ghost"
