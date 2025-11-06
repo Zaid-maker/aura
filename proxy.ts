@@ -25,6 +25,8 @@ const protectedRoutes = [
   "/api/stories/*", // POST to specific story endpoints requires auth, GET is public
   "/api/notifications", // GET notifications requires auth
   "/api/notifications/*", // POST mark-read requires auth
+  "/api/user/profile", // PATCH profile update requires auth
+  "/api/user/delete", // DELETE account requires auth
 ];
 
 // Define public routes that don't require authentication

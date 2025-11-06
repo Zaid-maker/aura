@@ -52,11 +52,15 @@ export const authOptions: NextAuthOptions = {
         // Fetch additional user data
         const user = await prisma.user.findUnique({
           where: { id: token.sub as string },
-          select: { username: true },
+          select: { 
+            username: true,
+            bio: true,
+          },
         });
 
         if (user) {
           session.user.username = user.username;
+          session.user.bio = user.bio;
         }
       }
       return session;
