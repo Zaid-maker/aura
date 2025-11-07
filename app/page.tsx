@@ -72,8 +72,8 @@ export default async function Home() {
     isFollowing: userFollowing.includes(post.user.id),
   }));
 
-  // Fetch recent stories (not expired)
-  const stories = await prisma.story.findMany({
+  // Fetch recent stories (grouped by user)
+  const allStories = await prisma.story.findMany({
     where: {
       expiresAt: {
         gte: new Date(),
@@ -92,8 +92,36 @@ export default async function Home() {
     orderBy: {
       createdAt: "desc",
     },
-    take: 10,
   });
+
+  // Group stories by user
+  const storiesGrouped = allStories.reduce(
+    (acc, story) => {
+      const userId = story.user.id;
+      if (!acc[userId]) {
+        acc[userId] = {
+          user: story.user,
+          stories: [],
+        };
+      }
+      acc[userId].stories.push(story);
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        user: {
+          id: string;
+          username: string | null;
+          name: string | null;
+          image: string | null;
+        };
+        stories: any[];
+      }
+    >
+  );
+
+  const stories = Object.values(storiesGrouped);
 
   // Fetch suggested users (random users for now)
   const suggestedUsers = await prisma.user.findMany({

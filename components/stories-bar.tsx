@@ -10,13 +10,19 @@ import { useSession } from "next-auth/react";
 
 interface StoriesBarProps {
   stories: Array<{
-    id: string;
     user: {
       id: string;
       username: string | null;
       name: string | null;
       image: string | null;
     };
+    stories: Array<{
+      id: string;
+      imageUrl: string;
+      createdAt: Date;
+      expiresAt: Date;
+      userId: string;
+    }>;
   }>;
 }
 
@@ -29,11 +35,11 @@ export function StoriesBar({ stories }: StoriesBarProps) {
     userImage: string | null;
   } | null>(null);
 
-  const handleStoryClick = (story: any) => {
+  const handleStoryClick = (groupedStory: any) => {
     setViewingStory({
-      userId: story.user.id,
-      userName: story.user.name || story.user.username || "User",
-      userImage: story.user.image,
+      userId: groupedStory.user.id,
+      userName: groupedStory.user.name || groupedStory.user.username || "User",
+      userImage: groupedStory.user.image,
     });
   };
 
@@ -65,12 +71,16 @@ export function StoriesBar({ stories }: StoriesBarProps) {
           )}
 
           {/* Existing Stories */}
-          {stories.map((story) => (
+          {stories.map((groupedStory) => (
             <Story
-              key={story.id}
-              story={story}
+              key={groupedStory.user.id}
+              story={{
+                id: groupedStory.stories[0].id,
+                user: groupedStory.user,
+              }}
               hasStory
-              onClick={() => handleStoryClick(story)}
+              storyCount={groupedStory.stories.length}
+              onClick={() => handleStoryClick(groupedStory)}
             />
           ))}
         </div>
