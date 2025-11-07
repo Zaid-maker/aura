@@ -101,6 +101,9 @@ export function CreateStoryDialog({
                   alt="Story preview"
                   fill
                   className="object-contain"
+                  priority
+                  quality={90}
+                  sizes="(max-width: 500px) 100vw, 500px"
                 />
               </div>
               <Button

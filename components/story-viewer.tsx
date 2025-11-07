@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -32,7 +32,9 @@ export function StoryViewer({
   const [stories, setStories] = useState<Story[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (open && userId) {
@@ -40,8 +42,29 @@ export function StoryViewer({
     }
   }, [open, userId]);
 
+  // Preload next and previous images
   useEffect(() => {
-    if (!open || stories.length === 0) return;
+    if (stories.length === 0) return;
+
+    const preloadImages = [];
+    
+    // Preload next image
+    if (currentIndex < stories.length - 1) {
+      const nextImg = new window.Image();
+      nextImg.src = stories[currentIndex + 1].imageUrl;
+      preloadImages.push(nextImg);
+    }
+    
+    // Preload previous image
+    if (currentIndex > 0) {
+      const prevImg = new window.Image();
+      prevImg.src = stories[currentIndex - 1].imageUrl;
+      preloadImages.push(prevImg);
+    }
+  }, [currentIndex, stories]);
+
+  useEffect(() => {
+    if (!open || stories.length === 0 || isPaused || imageLoading) return;
 
     setProgress(0);
     const duration = 5000; // 5 seconds per story
@@ -59,7 +82,7 @@ export function StoryViewer({
     }, interval);
 
     return () => clearInterval(timer);
-  }, [currentIndex, stories, open]);
+  }, [currentIndex, stories, open, isPaused, imageLoading]);
 
   const fetchStories = async () => {
     setLoading(true);
@@ -77,6 +100,7 @@ export function StoryViewer({
   const handleNext = () => {
     if (currentIndex < stories.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      setImageLoading(true);
     } else {
       onOpenChange(false);
     }
@@ -85,6 +109,7 @@ export function StoryViewer({
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
+      setImageLoading(true);
     }
   };
 
@@ -157,12 +182,25 @@ export function StoryViewer({
 
           {/* Story Image */}
           <div className="relative w-full h-full">
+            {/* Loading spinner */}
+            {imageLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+                <Loader2 className="h-8 w-8 text-white animate-spin" />
+              </div>
+            )}
+            
             <Image
               src={currentStory.imageUrl}
               alt="Story"
               fill
               className="object-contain"
-              priority
+              priority={currentIndex === 0}
+              loading={currentIndex === 0 ? "eager" : "lazy"}
+              quality={85}
+              sizes="(max-width: 500px) 100vw, 500px"
+              onLoadingComplete={() => setImageLoading(false)}
+              onLoad={() => setImageLoading(false)}
+              onError={() => setImageLoading(false)}
             />
           </div>
 
@@ -170,6 +208,10 @@ export function StoryViewer({
           <div className="absolute inset-0 z-10 flex">
             <button
               onClick={handlePrevious}
+              onMouseDown={() => setIsPaused(true)}
+              onMouseUp={() => setIsPaused(false)}
+              onTouchStart={() => setIsPaused(true)}
+              onTouchEnd={() => setIsPaused(false)}
               className="flex-1 cursor-pointer"
               disabled={currentIndex === 0}
             >
@@ -179,7 +221,14 @@ export function StoryViewer({
                 </div>
               )}
             </button>
-            <button onClick={handleNext} className="flex-1 cursor-pointer">
+            <button
+              onClick={handleNext}
+              onMouseDown={() => setIsPaused(true)}
+              onMouseUp={() => setIsPaused(false)}
+              onTouchStart={() => setIsPaused(true)}
+              onTouchEnd={() => setIsPaused(false)}
+              className="flex-1 cursor-pointer"
+            >
               {currentIndex < stories.length - 1 && (
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 transition-opacity">
                   <ChevronRight className="h-8 w-8 text-white drop-shadow-lg" />

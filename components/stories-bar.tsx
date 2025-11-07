@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Story } from "./story";
 import { CreateStoryDialog } from "./create-story-dialog";
 import { StoryViewer } from "./story-viewer";
@@ -34,6 +34,18 @@ export function StoriesBar({ stories }: StoriesBarProps) {
     userName: string;
     userImage: string | null;
   } | null>(null);
+
+  // Preload first story image for each user for faster viewing
+  useEffect(() => {
+    if (stories.length > 0) {
+      stories.forEach((groupedStory) => {
+        if (groupedStory.stories[0]?.imageUrl) {
+          const img = new Image();
+          img.src = groupedStory.stories[0].imageUrl;
+        }
+      });
+    }
+  }, [stories]);
 
   const handleStoryClick = (groupedStory: any) => {
     setViewingStory({
