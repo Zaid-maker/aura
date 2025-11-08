@@ -43,6 +43,7 @@ export default async function Home() {
           username: true,
           name: true,
           image: true,
+          verified: true,
         },
       },
       _count: {
@@ -86,6 +87,7 @@ export default async function Home() {
           username: true,
           name: true,
           image: true,
+          verified: true,
         },
       },
     },

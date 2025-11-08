@@ -55,12 +55,14 @@ export const authOptions: NextAuthOptions = {
           select: { 
             username: true,
             bio: true,
+            verified: true,
           },
         });
 
         if (user) {
           session.user.username = user.username;
           session.user.bio = user.bio;
+          session.user.verified = user.verified;
         }
       }
       return session;

@@ -5,6 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Heart, MessageCircle, UserPlus, Eye } from "lucide-react";
 import type { NotificationType, NotificationActor } from "@/types/notifications";
+import { VerifiedBadge } from "@/components/verified-badge";
 
 interface NotificationItemProps {
   id: string;
@@ -62,8 +63,9 @@ export function NotificationItem({
 
       <div className="flex-1 min-w-0">
         <p className="text-sm">
-          <span className="font-semibold">
+          <span className="font-semibold inline-flex items-center gap-1">
             {actor?.username || actor?.name || "Someone"}
+            <VerifiedBadge verified={actor?.verified} size="sm" />
           </span>{" "}
           {message.replace(actor?.username || actor?.name || "Someone", "").trim()}
         </p>

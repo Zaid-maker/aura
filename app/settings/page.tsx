@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Moon, Sun, Monitor, Trash2, Save } from "lucide-react";
+import { Moon, Sun, Monitor, Trash2, Save, BadgeCheck } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -331,6 +331,44 @@ export default function SettingsPage() {
               />
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 Email cannot be changed
+              </p>
+            </div>
+
+            {/* Verification Status (For Testing - Remove in production) */}
+            <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BadgeCheck className="h-5 w-5 text-blue-500" />
+                  <div>
+                    <p className="font-semibold text-sm">Verification Status</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {session?.user?.verified ? "Your account is verified" : "Your account is not verified"}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`/api/admin/users/${session?.user?.id}/verify`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ verified: !session?.user?.verified }),
+                      });
+                      if (response.ok) {
+                        window.location.reload();
+                      }
+                    } catch (error) {
+                      console.error("Error toggling verification:", error);
+                    }
+                  }}
+                >
+                  {session?.user?.verified ? "Remove" : "Verify"} Badge
+                </Button>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                ⚠️ For testing only. In production, only admins can verify users.
               </p>
             </div>
 

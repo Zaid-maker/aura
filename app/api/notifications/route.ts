@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
             username: true,
             name: true,
             image: true,
+            verified: true,
           },
         },
       },

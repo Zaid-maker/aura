@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Settings, Grid3x3, Bookmark, UserCircle2 } from "lucide-react";
 import { FollowButton } from "@/components/follow-button";
 import { EditProfileDialog } from "@/components/edit-profile-dialog";
+import { VerifiedBadge } from "@/components/verified-badge";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -102,9 +103,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         {/* Profile Info */}
         <div className="flex-1">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-6">
-            <h1 className="text-xl font-normal">
-              {user.username || user.name}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-normal">
+                {user.username || user.name}
+              </h1>
+              <VerifiedBadge verified={user.verified} size="md" />
+            </div>
 
             <div className="flex gap-2">
               {isOwnProfile ? (

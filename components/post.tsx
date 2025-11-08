@@ -40,6 +40,7 @@ import { useState } from "react";
 import { CommentsDialog } from "@/components/comments-dialog";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { VerifiedBadge } from "@/components/verified-badge";
 
 interface PostProps {
   post: {
@@ -52,6 +53,7 @@ interface PostProps {
       username: string | null;
       name: string | null;
       image: string | null;
+      verified?: boolean;
     };
     _count?: {
       likes: number;
@@ -198,9 +200,10 @@ export function Post({
             </Link>
             <Link
               href={`/${post.user.username}`}
-              className="text-sm font-semibold hover:opacity-50 transition-opacity"
+              className="text-sm font-semibold hover:opacity-50 transition-opacity flex items-center gap-1"
             >
               {post.user.username || post.user.name}
+              <VerifiedBadge verified={post.user.verified} size="sm" />
             </Link>
             {!isOwnPost && (
               <>

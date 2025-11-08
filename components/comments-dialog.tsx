@@ -15,6 +15,7 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import { VerifiedBadge } from "@/components/verified-badge";
 
 interface Comment {
   id: string;
@@ -25,6 +26,7 @@ interface Comment {
     username: string | null;
     name: string | null;
     image: string | null;
+    verified?: boolean;
   };
 }
 
@@ -127,9 +129,10 @@ export function CommentsDialog({
                   <div className="flex items-baseline gap-2">
                     <Link
                       href={`/${comment.user.username}`}
-                      className="font-semibold text-sm hover:opacity-50"
+                      className="font-semibold text-sm hover:opacity-50 flex items-center gap-1"
                     >
                       {comment.user.username || comment.user.name}
+                      <VerifiedBadge verified={comment.user.verified} size="sm" />
                     </Link>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       {formatDistanceToNow(new Date(comment.createdAt), {
