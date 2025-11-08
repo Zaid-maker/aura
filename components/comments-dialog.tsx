@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -27,6 +28,7 @@ interface Comment {
     name: string | null;
     image: string | null;
     verified?: boolean;
+    role?: string;
   };
 }
 
@@ -133,6 +135,11 @@ export function CommentsDialog({
                     >
                       {comment.user.username || comment.user.name}
                       <VerifiedBadge verified={comment.user.verified} size="sm" />
+                      {comment.user.role === "ADMIN" && (
+                        <Badge className="bg-purple-500 hover:bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0 h-4">
+                          ADMIN
+                        </Badge>
+                      )}
                     </Link>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       {formatDistanceToNow(new Date(comment.createdAt), {

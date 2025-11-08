@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,6 +55,7 @@ interface PostProps {
       name: string | null;
       image: string | null;
       verified?: boolean;
+      role?: string;
     };
     _count?: {
       likes: number;
@@ -204,6 +206,11 @@ export function Post({
             >
               {post.user.username || post.user.name}
               <VerifiedBadge verified={post.user.verified} size="sm" />
+              {post.user.role === "ADMIN" && (
+                <Badge className="bg-purple-500 hover:bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0 h-4">
+                  ADMIN
+                </Badge>
+              )}
             </Link>
             {!isOwnPost && (
               <>

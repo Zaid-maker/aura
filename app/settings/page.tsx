@@ -334,7 +334,29 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            {/* Verification Status (For Testing - Remove in production) */}
+            {/* Admin Badge */}
+            {session?.user?.role === "ADMIN" && (
+              <div className="p-4 bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-2 border-purple-300 dark:border-purple-700 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-500 rounded-full">
+                    <BadgeCheck className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-sm">Administrator</p>
+                      <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded-full">
+                        ADMIN
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                      You have full administrative privileges on this platform
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Verification Status */}
             <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

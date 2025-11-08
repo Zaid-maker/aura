@@ -44,6 +44,7 @@ export default async function Home() {
           name: true,
           image: true,
           verified: true,
+          role: true,
         },
       },
       _count: {
@@ -88,6 +89,7 @@ export default async function Home() {
           name: true,
           image: true,
           verified: true,
+          role: true,
         },
       },
     },

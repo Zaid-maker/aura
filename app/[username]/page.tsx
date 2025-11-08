@@ -108,6 +108,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 {user.username || user.name}
               </h1>
               <VerifiedBadge verified={user.verified} size="md" />
+              {user.role === "ADMIN" && (
+                <Badge className="bg-purple-500 hover:bg-purple-600 text-white text-xs font-bold">
+                  ADMIN
+                </Badge>
+              )}
             </div>
 
             <div className="flex gap-2">
