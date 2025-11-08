@@ -46,6 +46,12 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// User role enum
+enum UserRole {
+  USER
+  ADMIN
+}
+
 // User model
 model User {
   id            String    @id @default(cuid())
@@ -57,6 +63,7 @@ model User {
   image         String?
   bio           String?   @db.Text
   verified      Boolean   @default(false)
+  role          UserRole  @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

@@ -16,12 +16,18 @@ export async function POST(
     const { session, headers } = protection;
     const { userId } = await params;
 
-    // TODO: Add admin role check here
-    // For now, users can only verify themselves (for testing)
-    // In production, only admins should be able to verify users
-    if (session.user.id !== userId) {
+    // Check if session exists and has user
+    if (!session?.user) {
       return NextResponse.json(
-        { error: "Unauthorized. Only admins can verify users." },
+        { error: "Unauthorized. Authentication required." },
+        { status: 401, headers }
+      );
+    }
+
+    // Only admins can verify users
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "Forbidden. Only administrators can verify users." },
         { status: 403, headers }
       );
     }

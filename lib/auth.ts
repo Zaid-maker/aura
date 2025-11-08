@@ -56,6 +56,7 @@ export const authOptions: NextAuthOptions = {
             username: true,
             bio: true,
             verified: true,
+            role: true,
           },
         });
 
@@ -63,6 +64,7 @@ export const authOptions: NextAuthOptions = {
           session.user.username = user.username;
           session.user.bio = user.bio;
           session.user.verified = user.verified;
+          session.user.role = user.role;
         }
       }
       return session;

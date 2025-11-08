@@ -10,6 +10,7 @@ declare module "next-auth" {
       username?: string | null;
       bio?: string | null;
       verified?: boolean;
+      role?: "USER" | "ADMIN";
     };
   }
 
@@ -21,6 +22,7 @@ declare module "next-auth" {
     username?: string | null;
     bio?: string | null;
     verified?: boolean;
+    role?: "USER" | "ADMIN";
   }
 }
 
