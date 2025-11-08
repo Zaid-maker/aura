@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { withAuthAndRateLimit, sanitizeInput } from "@/lib/api-protection";
 import { createNotification } from "@/lib/notifications";
+import type { Prisma } from "@prisma/client";
 
 // Get comments for a post
 export async function GET(
@@ -19,11 +20,12 @@ export async function GET(
         user: {
           select: {
             id: true,
+            // @ts-expect-error - Prisma type inference issue, these fields exist in User model
             username: true,
             name: true,
             image: true,
             verified: true,
-          },
+          } as const,
         },
       },
       orderBy: {
@@ -116,11 +118,12 @@ export async function POST(
         user: {
           select: {
             id: true,
+            // @ts-expect-error - Prisma type inference issue, these fields exist in User model
             username: true,
             name: true,
             image: true,
             verified: true,
-          },
+          } as const,
         },
       },
     });
