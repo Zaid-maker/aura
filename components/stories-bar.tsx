@@ -15,6 +15,7 @@ interface StoriesBarProps {
       username: string | null;
       name: string | null;
       image: string | null;
+      verified?: boolean;
     };
     stories: Array<{
       id: string;
@@ -33,6 +34,7 @@ export function StoriesBar({ stories }: StoriesBarProps) {
     userId: string;
     userName: string;
     userImage: string | null;
+    userVerified: boolean;
   } | null>(null);
 
   // Preload first story image for each user for faster viewing
@@ -52,6 +54,7 @@ export function StoriesBar({ stories }: StoriesBarProps) {
       userId: groupedStory.user.id,
       userName: groupedStory.user.name || groupedStory.user.username || "User",
       userImage: groupedStory.user.image,
+      userVerified: groupedStory.user.verified || false,
     });
   };
 
@@ -112,6 +115,7 @@ export function StoriesBar({ stories }: StoriesBarProps) {
           userId={viewingStory.userId}
           userName={viewingStory.userName}
           userImage={viewingStory.userImage}
+          userVerified={viewingStory.userVerified}
         />
       )}
     </>

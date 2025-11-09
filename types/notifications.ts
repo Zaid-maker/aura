@@ -10,6 +10,7 @@ export interface NotificationActor {
   username: string | null;
   name: string | null;
   image: string | null;
+  verified?: boolean;
 }
 
 export interface Notification {

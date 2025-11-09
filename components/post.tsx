@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +41,7 @@ import { useState } from "react";
 import { CommentsDialog } from "@/components/comments-dialog";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { VerifiedBadge } from "@/components/verified-badge";
 
 interface PostProps {
   post: {
@@ -52,6 +54,8 @@ interface PostProps {
       username: string | null;
       name: string | null;
       image: string | null;
+      verified?: boolean;
+      role?: string;
     };
     _count?: {
       likes: number;
@@ -198,9 +202,15 @@ export function Post({
             </Link>
             <Link
               href={`/${post.user.username}`}
-              className="text-sm font-semibold hover:opacity-50 transition-opacity"
+              className="text-sm font-semibold hover:opacity-50 transition-opacity flex items-center gap-1"
             >
               {post.user.username || post.user.name}
+              <VerifiedBadge verified={post.user.verified} size="sm" />
+              {post.user.role === "ADMIN" && (
+                <Badge className="bg-purple-500 hover:bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0 h-4">
+                  ADMIN
+                </Badge>
+              )}
             </Link>
             {!isOwnPost && (
               <>

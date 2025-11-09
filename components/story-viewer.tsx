@@ -7,6 +7,7 @@ import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { VerifiedBadge } from "@/components/verified-badge";
 
 interface Story {
   id: string;
@@ -20,6 +21,7 @@ interface StoryViewerProps {
   userId: string;
   userName: string;
   userImage: string | null;
+  userVerified?: boolean;
 }
 
 export function StoryViewer({
@@ -28,6 +30,7 @@ export function StoryViewer({
   userId,
   userName,
   userImage,
+  userVerified = false,
 }: StoryViewerProps) {
   const [stories, setStories] = useState<Story[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -162,9 +165,12 @@ export function StoryViewer({
                 <AvatarFallback>{userName[0]?.toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-white">
-                  {userName}
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-semibold text-white">
+                    {userName}
+                  </span>
+                  <VerifiedBadge verified={userVerified} size="sm" />
+                </div>
                 <span className="text-xs text-white/80">
                   {getTimeAgo(currentStory.createdAt)}
                 </span>
