@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuthAndRateLimit } from "@/lib/api-protection";
+import { Prisma } from "@prisma/client";
 
 export async function POST(
   req: NextRequest,
@@ -43,27 +44,42 @@ export async function POST(
     }
 
     // Update user verification status
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: { verified },
-      select: {
-        id: true,
-        username: true,
-        name: true,
-        verified: true,
-      },
-    });
+    try {
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data: { verified },
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          verified: true,
+        },
+      });
 
-    return NextResponse.json(
-      {
-        success: true,
-        user,
-        message: verified
-          ? "User verified successfully"
-          : "User verification removed",
-      },
-      { headers }
-    );
+      return NextResponse.json(
+        {
+          success: true,
+          user,
+          message: verified
+            ? "User verified successfully"
+            : "User verification removed",
+        },
+        { headers }
+      );
+    } catch (updateError) {
+      // Handle user not found error
+      if (
+        updateError instanceof Prisma.PrismaClientKnownRequestError &&
+        updateError.code === "P2025"
+      ) {
+        return NextResponse.json(
+          { error: "User not found" },
+          { status: 404, headers }
+        );
+      }
+      // Rethrow other errors to be caught by outer catch
+      throw updateError;
+    }
   } catch (error) {
     console.error("Error updating verification status:", error);
     return NextResponse.json(
