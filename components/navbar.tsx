@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Home, MessageCircle, PlusSquare, Search, LogOut } from "lucide-react";
+import { Home, MessageCircle, PlusSquare, Search, LogOut, Shield } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -133,6 +133,17 @@ export function Navbar() {
                           Settings
                         </Link>
                       </DropdownMenuItem>
+                      {session.user.role === "ADMIN" && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href="/admin" className="cursor-pointer text-purple-600 dark:text-purple-400">
+                              <Shield className="mr-2 h-4 w-4" />
+                              Admin Dashboard
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => signOut({ callbackUrl: "/auth/signin" })}

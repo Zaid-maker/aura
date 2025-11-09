@@ -8,7 +8,8 @@ export type NotificationType =
   | "COMMENT"
   | "FOLLOW"
   | "MENTION"
-  | "STORY_VIEW";
+  | "STORY_VIEW"
+  | "SYSTEM";
 
 export interface NotificationActor {
   id: string;

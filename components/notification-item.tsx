@@ -1,9 +1,10 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
-import { Heart, MessageCircle, UserPlus, Eye } from "lucide-react";
+import { Heart, MessageCircle, UserPlus, Eye, Bell } from "lucide-react";
 import type {
   NotificationType,
   NotificationActor,
@@ -27,6 +28,7 @@ const notificationIcons = {
   FOLLOW: <UserPlus className="h-4 w-4 text-green-500" />,
   MENTION: <MessageCircle className="h-4 w-4 text-purple-500" />,
   STORY_VIEW: <Eye className="h-4 w-4 text-orange-500" />,
+  SYSTEM: <Bell className="h-4 w-4 text-blue-500" fill="currentColor" />,
 };
 
 export function NotificationItem({
@@ -44,6 +46,42 @@ export function NotificationItem({
       onMarkAsRead(id);
     }
   };
+
+  // System notifications have special rendering
+  if (type === "SYSTEM") {
+    return (
+      <div
+        className={`flex items-start gap-3 p-4 hover:bg-muted/50 transition-colors cursor-pointer ${
+          !read ? "bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500" : ""
+        }`}
+        onClick={handleClick}
+      >
+        <div className="relative">
+          <div className="h-10 w-10 bg-linear-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+            <Bell className="h-5 w-5 text-white" />
+          </div>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <Badge className="bg-blue-500 hover:bg-blue-600 text-white text-xs">
+              SYSTEM
+            </Badge>
+          </div>
+          <p className="text-sm font-medium">{message}</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
+          </p>
+        </div>
+
+        {!read && (
+          <div className="shrink-0">
+            <div className="h-2 w-2 bg-blue-500 rounded-full" />
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const notificationContent = (
     <div

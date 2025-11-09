@@ -28,6 +28,7 @@ const protectedRoutes = [
   "/api/user/profile", // PATCH profile update requires auth
   "/api/user/delete", // DELETE account requires auth
   "/api/admin/users/*/verify", // POST to verify/unverify users requires auth (admins can verify others, users can self-verify)
+  "/api/admin/notifications/system", // POST to send system notifications (admin only)
 ];
 
 // Define public routes that don't require authentication
