@@ -59,7 +59,10 @@ export async function createNotification({
 /**
  * Mark notifications as read
  */
-export async function markNotificationsAsRead(userId: string, notificationIds: string[]) {
+export async function markNotificationsAsRead(
+  userId: string,
+  notificationIds: string[],
+) {
   try {
     await prisma.notification.updateMany({
       where: {

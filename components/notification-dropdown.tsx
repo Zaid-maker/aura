@@ -56,9 +56,7 @@ export function NotificationDropdown() {
 
       if (response.ok) {
         setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === notificationId ? { ...n, read: true } : n
-          )
+          prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
         );
         setUnreadCount((prev) => Math.max(0, prev - 1));
       }
@@ -76,9 +74,7 @@ export function NotificationDropdown() {
       });
 
       if (response.ok) {
-        setNotifications((prev) =>
-          prev.map((n) => ({ ...n, read: true }))
-        );
+        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
         setUnreadCount(0);
       }
     } catch (error) {
@@ -120,7 +116,9 @@ export function NotificationDropdown() {
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex items-center justify-center h-32">
-              <p className="text-sm text-muted-foreground">No notifications yet</p>
+              <p className="text-sm text-muted-foreground">
+                No notifications yet
+              </p>
             </div>
           ) : (
             <div className="divide-y">

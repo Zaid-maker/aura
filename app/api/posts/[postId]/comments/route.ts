@@ -99,7 +99,7 @@ export async function POST(
     // Verify post exists and get post owner
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      select: { 
+      select: {
         id: true,
         userId: true,
       },

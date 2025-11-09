@@ -50,14 +50,14 @@ export function StoryViewer({
     if (stories.length === 0) return;
 
     const preloadImages = [];
-    
+
     // Preload next image
     if (currentIndex < stories.length - 1) {
       const nextImg = new window.Image();
       nextImg.src = stories[currentIndex + 1].imageUrl;
       preloadImages.push(nextImg);
     }
-    
+
     // Preload previous image
     if (currentIndex > 0) {
       const prevImg = new window.Image();
@@ -194,7 +194,7 @@ export function StoryViewer({
                 <Loader2 className="h-8 w-8 text-white animate-spin" />
               </div>
             )}
-            
+
             <Image
               src={currentStory.imageUrl}
               alt="Story"

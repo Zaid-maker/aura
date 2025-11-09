@@ -3,13 +3,7 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Home,
-  MessageCircle,
-  PlusSquare,
-  Search,
-  LogOut,
-} from "lucide-react";
+import { Home, MessageCircle, PlusSquare, Search, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";

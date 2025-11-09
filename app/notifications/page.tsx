@@ -28,13 +28,13 @@ export default function NotificationsPage() {
         const response = await fetch(`/api/notifications?${params}`);
         if (response.ok) {
           const data: NotificationResponse = await response.json();
-          
+
           if (cursor) {
             setNotifications((prev) => [...prev, ...data.notifications]);
           } else {
             setNotifications(data.notifications);
           }
-          
+
           // Always use server-provided counts
           setUnreadCount(data.unreadCount);
           setTotalCount(data.totalCount);
@@ -47,7 +47,7 @@ export default function NotificationsPage() {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function NotificationsPage() {
 
       if (response.ok) {
         setNotifications((prev) =>
-          prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+          prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
         );
         setUnreadCount((prev) => Math.max(0, prev - 1));
       }

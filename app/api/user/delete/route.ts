@@ -22,13 +22,13 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json(
       { message: "Account deleted successfully" },
-      { headers }
+      { headers },
     );
   } catch (error) {
     console.error("Error deleting account:", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

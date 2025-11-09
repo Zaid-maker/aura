@@ -112,23 +112,23 @@ describe("POST /api/admin/users/[userId]/verify", () => {
 
 /**
  * Test Scenarios Summary:
- * 
+ *
  * 1. ADMIN users:
  *    - ✅ Can verify/unverify any user (including themselves)
  *    - ✅ Receives proper success responses
  *    - ✅ Gets 404 for non-existent users
- * 
+ *
  * 2. NON-ADMIN users:
  *    - ✅ Can verify/unverify themselves only
  *    - ❌ Cannot verify/unverify other users (403 Forbidden)
  *    - ✅ Receives clear error message about self-only modification
- * 
+ *
  * 3. Edge Cases:
  *    - ✅ Invalid boolean values rejected
  *    - ✅ Missing required fields rejected
  *    - ✅ Non-existent users return 404 (not 500)
  *    - ✅ Proper error messages for each failure case
- * 
+ *
  * 4. Security:
  *    - ✅ Authentication required (401 if missing)
  *    - ✅ Authorization enforced (403 if not allowed)

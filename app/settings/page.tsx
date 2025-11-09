@@ -35,8 +35,11 @@ export default function SettingsPage() {
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
   // Profile form state
   const [formData, setFormData] = useState({
     name: "",
@@ -47,7 +50,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Load user data when session is available
     if (session?.user) {
       setFormData({
@@ -59,7 +62,9 @@ export default function SettingsPage() {
     }
   }, [session]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -90,7 +95,10 @@ export default function SettingsPage() {
         setMessage({ type: "success", text: "Profile updated successfully!" });
       } else {
         const error = await response.json();
-        setMessage({ type: "error", text: error.message || "Failed to update profile" });
+        setMessage({
+          type: "error",
+          text: error.message || "Failed to update profile",
+        });
       }
     } catch (error) {
       setMessage({ type: "error", text: "An error occurred while saving" });
@@ -114,7 +122,10 @@ export default function SettingsPage() {
         window.location.href = "/api/auth/signout";
       } else {
         const error = await response.json();
-        setMessage({ type: "error", text: error.message || "Failed to delete account" });
+        setMessage({
+          type: "error",
+          text: error.message || "Failed to delete account",
+        });
       }
     } catch (error) {
       setMessage({ type: "error", text: "An error occurred" });
@@ -254,9 +265,13 @@ export default function SettingsPage() {
             {/* Profile Picture */}
             <div className="flex items-center gap-4">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={formData.image || session?.user?.image || ""} />
+                <AvatarImage
+                  src={formData.image || session?.user?.image || ""}
+                />
                 <AvatarFallback className="text-2xl">
-                  {formData.name?.[0]?.toUpperCase() || session?.user?.name?.[0]?.toUpperCase() || "U"}
+                  {formData.name?.[0]?.toUpperCase() ||
+                    session?.user?.name?.[0]?.toUpperCase() ||
+                    "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
@@ -374,7 +389,8 @@ export default function SettingsPage() {
                 Danger Zone
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Once you delete your account, there is no going back. Please be certain.
+                Once you delete your account, there is no going back. Please be
+                certain.
               </p>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -385,10 +401,13 @@ export default function SettingsPage() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your
-                      account and remove all your data from our servers, including:
+                      This action cannot be undone. This will permanently delete
+                      your account and remove all your data from our servers,
+                      including:
                       <ul className="list-disc list-inside mt-2 space-y-1">
                         <li>All your posts and comments</li>
                         <li>Your profile information</li>

@@ -15,12 +15,13 @@ export async function GET(req: NextRequest) {
 
     const { session, headers } = protection;
     const { searchParams } = req.nextUrl;
-    
+
     // Pagination - sanitize and clamp limit
     const parsedLimit = parseInt(searchParams.get("limit") || "20", 10);
-    const sanitizedLimit = Number.isNaN(parsedLimit) || parsedLimit < 1 
-      ? 20 
-      : Math.min(parsedLimit, 50);
+    const sanitizedLimit =
+      Number.isNaN(parsedLimit) || parsedLimit < 1
+        ? 20
+        : Math.min(parsedLimit, 50);
     const cursor = searchParams.get("cursor");
     const unreadOnly = searchParams.get("unreadOnly") === "true";
 
@@ -51,10 +52,13 @@ export async function GET(req: NextRequest) {
     });
 
     const hasMore = notifications.length > sanitizedLimit;
-    const notificationsToReturn = hasMore ? notifications.slice(0, sanitizedLimit) : notifications;
-    const nextCursor = hasMore && notificationsToReturn.length > 0 
-      ? notificationsToReturn[notificationsToReturn.length - 1].id 
-      : undefined;
+    const notificationsToReturn = hasMore
+      ? notifications.slice(0, sanitizedLimit)
+      : notifications;
+    const nextCursor =
+      hasMore && notificationsToReturn.length > 0
+        ? notificationsToReturn[notificationsToReturn.length - 1].id
+        : undefined;
 
     // Get unread count
     const unreadCount = await prisma.notification.count({
@@ -78,13 +82,13 @@ export async function GET(req: NextRequest) {
         unreadCount,
         totalCount,
       },
-      { headers }
+      { headers },
     );
   } catch (error) {
     console.error("Error fetching notifications:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

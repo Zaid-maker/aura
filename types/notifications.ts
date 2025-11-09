@@ -3,7 +3,12 @@
  * Single source of truth for notification-related type definitions
  */
 
-export type NotificationType = "LIKE" | "COMMENT" | "FOLLOW" | "MENTION" | "STORY_VIEW";
+export type NotificationType =
+  | "LIKE"
+  | "COMMENT"
+  | "FOLLOW"
+  | "MENTION"
+  | "STORY_VIEW";
 
 export interface NotificationActor {
   id: string;

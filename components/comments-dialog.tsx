@@ -134,7 +134,10 @@ export function CommentsDialog({
                       className="font-semibold text-sm hover:opacity-50 flex items-center gap-1"
                     >
                       {comment.user.username || comment.user.name}
-                      <VerifiedBadge verified={comment.user.verified} size="sm" />
+                      <VerifiedBadge
+                        verified={comment.user.verified}
+                        size="sm"
+                      />
                       {comment.user.role === "ADMIN" && (
                         <Badge className="bg-purple-500 hover:bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0 h-4">
                           ADMIN

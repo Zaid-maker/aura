@@ -4,7 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Heart, MessageCircle, UserPlus, Eye } from "lucide-react";
-import type { NotificationType, NotificationActor } from "@/types/notifications";
+import type {
+  NotificationType,
+  NotificationActor,
+} from "@/types/notifications";
 import { VerifiedBadge } from "@/components/verified-badge";
 
 interface NotificationItemProps {
@@ -51,7 +54,10 @@ export function NotificationItem({
     >
       <div className="relative">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={actor?.image || undefined} alt={actor?.name || "User"} />
+          <AvatarImage
+            src={actor?.image || undefined}
+            alt={actor?.name || "User"}
+          />
           <AvatarFallback>
             {actor?.name?.[0] || actor?.username?.[0] || "U"}
           </AvatarFallback>
@@ -67,7 +73,9 @@ export function NotificationItem({
             {actor?.username || actor?.name || "Someone"}
             <VerifiedBadge verified={actor?.verified} size="sm" />
           </span>{" "}
-          {message.replace(actor?.username || actor?.name || "Someone", "").trim()}
+          {message
+            .replace(actor?.username || actor?.name || "Someone", "")
+            .trim()}
         </p>
         <p className="text-xs text-muted-foreground mt-1">
           {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}

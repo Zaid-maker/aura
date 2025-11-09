@@ -42,19 +42,16 @@ export async function POST(req: NextRequest) {
     } else {
       return NextResponse.json(
         { error: "Invalid request: provide notificationIds or markAll" },
-        { status: 400, headers }
+        { status: 400, headers },
       );
     }
 
-    return NextResponse.json(
-      { success: true },
-      { headers }
-    );
+    return NextResponse.json({ success: true }, { headers });
   } catch (error) {
     console.error("Error marking notifications as read:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

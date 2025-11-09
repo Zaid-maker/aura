@@ -25,7 +25,7 @@ export function VerifiedBadge({
       className={cn(
         "fill-blue-500 text-white inline-flex shrink-0",
         sizeClasses[size],
-        className
+        className,
       )}
       aria-label="Verified"
     />

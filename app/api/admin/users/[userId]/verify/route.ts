@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
     // Apply authentication and rate limiting
@@ -21,7 +21,7 @@ export async function POST(
     if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized. Authentication required." },
-        { status: 401, headers }
+        { status: 401, headers },
       );
     }
 
@@ -33,8 +33,10 @@ export async function POST(
     // - Non-admins can only verify themselves
     if (!isAdmin && !isSelfVerification) {
       return NextResponse.json(
-        { error: "Forbidden. You can only modify your own verification status." },
-        { status: 403, headers }
+        {
+          error: "Forbidden. You can only modify your own verification status.",
+        },
+        { status: 403, headers },
       );
     }
 
@@ -44,7 +46,7 @@ export async function POST(
     if (typeof verified !== "boolean") {
       return NextResponse.json(
         { error: "Invalid verification status" },
-        { status: 400, headers }
+        { status: 400, headers },
       );
     }
 
@@ -69,7 +71,7 @@ export async function POST(
             ? "User verified successfully"
             : "User verification removed",
         },
-        { headers }
+        { headers },
       );
     } catch (updateError) {
       // Handle user not found error
@@ -79,7 +81,7 @@ export async function POST(
       ) {
         return NextResponse.json(
           { error: "User not found" },
-          { status: 404, headers }
+          { status: 404, headers },
         );
       }
       // Rethrow other errors to be caught by outer catch
@@ -89,7 +91,7 @@ export async function POST(
     console.error("Error updating verification status:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

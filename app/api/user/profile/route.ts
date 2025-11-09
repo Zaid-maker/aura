@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest) {
       if (existingUser) {
         return NextResponse.json(
           { message: "Username is already taken" },
-          { status: 400, headers }
+          { status: 400, headers },
         );
       }
     }
@@ -57,7 +57,7 @@ export async function PATCH(req: NextRequest) {
     console.error("Error updating profile:", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

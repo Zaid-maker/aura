@@ -122,7 +122,7 @@ export default async function Home() {
         };
         stories: any[];
       }
-    >
+    >,
   );
 
   const stories = Object.values(storiesGrouped);
