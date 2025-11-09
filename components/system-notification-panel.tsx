@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -13,18 +13,85 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
-import { Bell, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Bell, Send, Loader2, CheckCircle2, AlertCircle, Search, Users } from "lucide-react";
 import { toast } from "sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+interface User {
+  id: string;
+  username: string | null;
+  name: string | null;
+  email: string | null;
+  image: string | null;
+}
 
 export function SystemNotificationPanel() {
   const [message, setMessage] = useState("");
   const [targetType, setTargetType] = useState<"all" | "specific">("all");
-  const [targetUserIds, setTargetUserIds] = useState("");
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [lastSent, setLastSent] = useState<{
     count: number;
     timestamp: Date;
   } | null>(null);
+
+  // Load users when specific target is selected
+  useEffect(() => {
+    if (targetType === "specific" && users.length === 0) {
+      loadUsers();
+    }
+  }, [targetType]);
+
+  const loadUsers = async () => {
+    setIsLoadingUsers(true);
+    try {
+      const response = await fetch("/api/admin/users");
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data.users || []);
+      } else {
+        toast.error("Failed to load users");
+      }
+    } catch (error) {
+      console.error("Error loading users:", error);
+      toast.error("An error occurred while loading users");
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
+  const toggleUserSelection = (userId: string) => {
+    setSelectedUserIds((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    const filtered = getFilteredUsers();
+    if (selectedUserIds.length === filtered.length && filtered.length > 0) {
+      setSelectedUserIds([]);
+    } else {
+      setSelectedUserIds(filtered.map((u) => u.id));
+    }
+  };
+
+  const getFilteredUsers = () => {
+    if (!searchQuery.trim()) return users;
+    const query = searchQuery.toLowerCase();
+    return users.filter(
+      (user) =>
+        user.username?.toLowerCase().includes(query) ||
+        user.name?.toLowerCase().includes(query) ||
+        user.email?.toLowerCase().includes(query)
+    );
+  };
 
   const handleSend = async () => {
     if (!message.trim()) {
@@ -45,18 +112,13 @@ export function SystemNotificationPanel() {
       };
 
       if (targetType === "specific") {
-        const ids = targetUserIds
-          .split(",")
-          .map((id) => id.trim())
-          .filter((id) => id.length > 0);
-
-        if (ids.length === 0) {
-          toast.error("Please enter at least one user ID");
+        if (selectedUserIds.length === 0) {
+          toast.error("Please select at least one user");
           setIsSending(false);
           return;
         }
 
-        body.targetUserIds = ids;
+        body.targetUserIds = selectedUserIds;
       }
 
       const response = await fetch("/api/admin/notifications/system", {
@@ -71,7 +133,8 @@ export function SystemNotificationPanel() {
           `System notification sent to ${data.recipientCount} user${data.recipientCount !== 1 ? "s" : ""}`
         );
         setMessage("");
-        setTargetUserIds("");
+        setSelectedUserIds([]);
+        setSearchQuery("");
         setLastSent({
           count: data.recipientCount,
           timestamp: new Date(),
@@ -151,17 +214,89 @@ export function SystemNotificationPanel() {
 
         {/* Specific User IDs */}
         {targetType === "specific" && (
-          <div className="space-y-2">
-            <Label htmlFor="userIds">User IDs (comma-separated)</Label>
-            <Input
-              id="userIds"
-              placeholder="user1_id, user2_id, user3_id"
-              value={targetUserIds}
-              onChange={(e) => setTargetUserIds(e.target.value)}
-            />
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              Enter user IDs separated by commas
-            </p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Select Users
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={toggleSelectAll}
+                disabled={isLoadingUsers || getFilteredUsers().length === 0}
+              >
+                {selectedUserIds.length === getFilteredUsers().length && getFilteredUsers().length > 0
+                  ? "Deselect All"
+                  : "Select All"}
+              </Button>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search by username, name, or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            {/* User List */}
+            {isLoadingUsers ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              </div>
+            ) : (
+              <ScrollArea className="h-[300px] border rounded-lg">
+                <div className="p-4 space-y-3">
+                  {getFilteredUsers().length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      {searchQuery ? "No users found" : "No users available"}
+                    </p>
+                  ) : (
+                    getFilteredUsers().map((user) => (
+                      <div
+                        key={user.id}
+                        className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                        onClick={() => toggleUserSelection(user.id)}
+                      >
+                        <Checkbox
+                          checked={selectedUserIds.includes(user.id)}
+                          onCheckedChange={() => toggleUserSelection(user.id)}
+                          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        />
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.image || ""} />
+                          <AvatarFallback>
+                            {user.username?.[0]?.toUpperCase() || user.name?.[0]?.toUpperCase() || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            {user.username || user.name || "Unknown User"}
+                          </p>
+                          {user.email && (
+                            <p className="text-xs text-gray-500 truncate">
+                              {user.email}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            )}
+
+            {/* Selected count */}
+            {selectedUserIds.length > 0 && (
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {selectedUserIds.length} user{selectedUserIds.length !== 1 ? "s" : ""} selected
+              </p>
+            )}
           </div>
         )}
 
