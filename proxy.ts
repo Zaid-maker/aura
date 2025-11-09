@@ -27,7 +27,7 @@ const protectedRoutes = [
   "/api/notifications/*", // POST mark-read requires auth
   "/api/user/profile", // PATCH profile update requires auth
   "/api/user/delete", // DELETE account requires auth
-  "/api/admin/users/*/verify", // POST to verify/unverify users requires auth
+  "/api/admin/users/*/verify", // POST to verify/unverify users requires auth (admins can verify others, users can self-verify)
 ];
 
 // Define public routes that don't require authentication

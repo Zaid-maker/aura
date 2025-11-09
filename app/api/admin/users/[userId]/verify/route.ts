@@ -25,10 +25,15 @@ export async function POST(
       );
     }
 
-    // Only admins can verify users
-    if (session.user.role !== "ADMIN") {
+    const isAdmin = session.user.role === "ADMIN";
+    const isSelfVerification = session.user.id === userId;
+
+    // Authorization check:
+    // - Admins can verify any user
+    // - Non-admins can only verify themselves
+    if (!isAdmin && !isSelfVerification) {
       return NextResponse.json(
-        { error: "Forbidden. Only administrators can verify users." },
+        { error: "Forbidden. You can only modify your own verification status." },
         { status: 403, headers }
       );
     }
