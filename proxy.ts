@@ -30,6 +30,7 @@ const protectedRoutes = [
   "/api/admin/users/*/verify", // POST to verify/unverify users requires auth (admins can verify others, users can self-verify)
   "/api/admin/notifications/system", // POST to send system notifications (admin only)
   "/api/admin/users", // GET all users (admin only)
+  "/api/notifications/subscribe", // POST/DELETE/GET push notification subscriptions
 ];
 
 // Define public routes that don't require authentication
