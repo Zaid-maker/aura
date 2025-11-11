@@ -24,8 +24,29 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status"); // PENDING, UNDER_REVIEW, RESOLVED, DISMISSED
     const type = searchParams.get("type"); // POST, COMMENT, USER
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    
+    // Parse and validate page parameter
+    const pageParam = searchParams.get("page");
+    const parsedPage = pageParam ? parseInt(pageParam, 10) : 1;
+    if (pageParam && (!Number.isFinite(parsedPage) || parsedPage < 1)) {
+      return NextResponse.json(
+        { error: "Invalid page parameter. Must be a positive integer." },
+        { status: 400 },
+      );
+    }
+    const page = Math.max(1, parsedPage);
+
+    // Parse and validate limit parameter
+    const limitParam = searchParams.get("limit");
+    const parsedLimit = limitParam ? parseInt(limitParam, 10) : 20;
+    if (limitParam && (!Number.isFinite(parsedLimit) || parsedLimit < 1)) {
+      return NextResponse.json(
+        { error: "Invalid limit parameter. Must be a positive integer." },
+        { status: 400 },
+      );
+    }
+    const limit = Math.min(100, Math.max(1, parsedLimit)); // Clamp between 1 and 100
+    
     const skip = (page - 1) * limit;
 
     // Build where clause
