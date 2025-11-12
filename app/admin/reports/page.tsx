@@ -36,10 +36,19 @@ import {
   XCircle,
   Clock,
   Flag,
+  Search,
+  Filter,
+  RefreshCw,
+  Eye,
+  TrendingUp,
+  User,
+  MessageSquare,
+  FileText,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
 
 interface Report {
   id: string;
@@ -111,6 +120,15 @@ export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    underReview: 0,
+    resolved: 0,
+    dismissed: 0,
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -119,10 +137,29 @@ export default function ReportsPage() {
     }
 
     if (status === "authenticated") {
-      // Check if user is admin (you might want to add this check)
       fetchReports();
+      fetchStats();
     }
-  }, [status, activeTab, pagination.page]);
+  }, [status, activeTab, pagination.page, selectedType]);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch("/api/admin/reports?limit=1000");
+      if (response.ok) {
+        const data = await response.json();
+        const allReports = data.reports;
+        setStats({
+          total: allReports.length,
+          pending: allReports.filter((r: Report) => r.status === "PENDING").length,
+          underReview: allReports.filter((r: Report) => r.status === "UNDER_REVIEW").length,
+          resolved: allReports.filter((r: Report) => r.status === "RESOLVED").length,
+          dismissed: allReports.filter((r: Report) => r.status === "DISMISSED").length,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
 
   const fetchReports = async () => {
     setIsLoading(true);
@@ -134,6 +171,10 @@ export default function ReportsPage() {
 
       if (activeTab !== "all") {
         params.append("status", activeTab);
+      }
+
+      if (selectedType !== "all") {
+        params.append("type", selectedType);
       }
 
       const response = await fetch(`/api/admin/reports?${params}`);
@@ -168,8 +209,9 @@ export default function ReportsPage() {
       });
 
       if (response.ok) {
-        toast.success(`Report marked as ${newStatus.toLowerCase()}`);
-        fetchReports(); // Refresh the list
+        toast.success(`Report marked as ${newStatus.toLowerCase().replace("_", " ")}`);
+        fetchReports();
+        fetchStats();
       } else {
         toast.error("Failed to update report");
       }
@@ -193,6 +235,7 @@ export default function ReportsPage() {
         setShowDeleteDialog(false);
         setSelectedReport(null);
         fetchReports();
+        fetchStats();
       } else {
         toast.error("Failed to delete report");
       }
@@ -223,6 +266,24 @@ export default function ReportsPage() {
     return "Unknown";
   };
 
+  const getContentTypeIcon = (report: Report) => {
+    if (report.postId) return FileText;
+    if (report.commentId) return MessageSquare;
+    if (report.reportedUserId) return User;
+    return Flag;
+  };
+
+  const filteredReports = reports.filter((report) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      report.reporter.username?.toLowerCase().includes(query) ||
+      report.reporter.name?.toLowerCase().includes(query) ||
+      report.reason.toLowerCase().includes(query) ||
+      report.description?.toLowerCase().includes(query)
+    );
+  });
+
   if (status === "loading" || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -241,61 +302,103 @@ export default function ReportsPage() {
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <AlertTriangle className="h-8 w-8 text-red-500" />
-            <h1 className="text-3xl font-bold">Content Reports</h1>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-red-500/10 rounded-lg">
+                  <AlertTriangle className="h-6 w-6 text-red-500" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold">Content Reports</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Review and manage user-reported content
+                  </p>
+                </div>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                fetchReports();
+                fetchStats();
+              }}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
           </div>
-          <p className="text-muted-foreground">
-            Review and manage user-reported content
-          </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <Card className="border-l-4 border-l-purple-500">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
                 Total Reports
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{pagination.total}</div>
+              <div className="text-2xl font-bold">{stats.total}</div>
+              <p className="text-xs text-muted-foreground mt-1">All time</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-l-4 border-l-yellow-500">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Clock className="h-4 w-4" />
                 Pending
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-yellow-500">
-                {reports.filter((r) => r.status === "PENDING").length}
+                {stats.pending}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">Awaiting review</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-l-4 border-l-blue-500">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <Eye className="h-4 w-4" />
                 Under Review
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-blue-500">
-                {reports.filter((r) => r.status === "UNDER_REVIEW").length}
+                {stats.underReview}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">In progress</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-l-4 border-l-green-500">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <CheckCircle className="h-4 w-4" />
                 Resolved
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-500">
-                {reports.filter((r) => r.status === "RESOLVED").length}
+                {stats.resolved}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">Action taken</p>
+            </CardContent>
+          </Card>
+          <Card className="border-l-4 border-l-gray-500">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <XCircle className="h-4 w-4" />
+                Dismissed
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-500">
+                {stats.dismissed}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">No violation</p>
             </CardContent>
           </Card>
         </div>
@@ -303,14 +406,97 @@ export default function ReportsPage() {
         {/* Filters and Tabs */}
         <Card className="mb-6">
           <CardHeader>
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex flex-col gap-4">
+              {/* Search and Type Filter */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by reporter, reason, or description..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={selectedType === "all" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("all")}
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    All Types
+                  </Button>
+                  <Button
+                    variant={selectedType === "POST" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("POST")}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Posts
+                  </Button>
+                  <Button
+                    variant={selectedType === "COMMENT" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("COMMENT")}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Comments
+                  </Button>
+                  <Button
+                    variant={selectedType === "USER" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("USER")}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Users
+                  </Button>
+                </div>
+              </div>
+
+              {/* Status Tabs */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-5">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="PENDING">Pending</TabsTrigger>
-                  <TabsTrigger value="UNDER_REVIEW">Review</TabsTrigger>
-                  <TabsTrigger value="RESOLVED">Resolved</TabsTrigger>
-                  <TabsTrigger value="DISMISSED">Dismissed</TabsTrigger>
+                  <TabsTrigger value="all">
+                    All
+                    {activeTab === "all" && (
+                      <Badge variant="secondary" className="ml-2">
+                        {pagination.total}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="PENDING">
+                    Pending
+                    {activeTab === "PENDING" && (
+                      <Badge variant="secondary" className="ml-2">
+                        {pagination.total}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="UNDER_REVIEW">
+                    Review
+                    {activeTab === "UNDER_REVIEW" && (
+                      <Badge variant="secondary" className="ml-2">
+                        {pagination.total}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="RESOLVED">
+                    Resolved
+                    {activeTab === "RESOLVED" && (
+                      <Badge variant="secondary" className="ml-2">
+                        {pagination.total}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="DISMISSED">
+                    Dismissed
+                    {activeTab === "DISMISSED" && (
+                      <Badge variant="secondary" className="ml-2">
+                        {pagination.total}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -323,70 +509,97 @@ export default function ReportsPage() {
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
             </div>
-          ) : reports.length === 0 ? (
+          ) : filteredReports.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
                 <Flag className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
                 <h3 className="text-lg font-semibold mb-2">No reports found</h3>
                 <p className="text-muted-foreground">
-                  There are no reports matching your filters.
+                  {searchQuery
+                    ? "No reports match your search criteria."
+                    : "There are no reports matching your filters."}
                 </p>
+                {searchQuery && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSearchQuery("")}
+                    className="mt-4"
+                  >
+                    Clear search
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ) : (
-            reports.map((report) => (
-              <Card key={report.id}>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    {/* Reporter Info */}
-                    <div className="flex items-start gap-3 md:w-48">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={report.reporter.image || ""} />
-                        <AvatarFallback>
-                          {report.reporter.username?.[0]?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">
-                          {report.reporter.username || report.reporter.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Reporter
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Report Details */}
-                    <div className="flex-1">
-                      <div className="flex flex-wrap items-start gap-2 mb-3">
-                        <Badge className={STATUS_COLORS[report.status as keyof typeof STATUS_COLORS]}>
-                          {StatusIcon(report.status)}
-                          <span className="ml-1">{report.status.replace("_", " ")}</span>
-                        </Badge>
-                        <Badge variant="outline">
-                          {report.type}
-                        </Badge>
-                        <Badge variant="secondary">
-                          {REPORT_REASONS[report.reason as keyof typeof REPORT_REASONS]}
-                        </Badge>
+            filteredReports.map((report) => {
+              const ContentTypeIcon = getContentTypeIcon(report);
+              return (
+                <Card key={report.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="flex flex-col md:flex-row gap-4">
+                      {/* Reporter Info */}
+                      <div className="flex items-start gap-3 md:w-48">
+                        <Avatar className="h-10 w-10 ring-2 ring-purple-500/20">
+                          <AvatarImage src={report.reporter.image || ""} />
+                          <AvatarFallback className="bg-purple-500/10">
+                            {report.reporter.username?.[0]?.toUpperCase() || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            {report.reporter.username || report.reporter.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Reporter
+                          </p>
+                        </div>
                       </div>
 
-                      {report.description && (
-                        <p className="text-sm text-muted-foreground mb-3">
-                          {report.description}
-                        </p>
-                      )}
+                      {/* Report Details */}
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-start gap-2 mb-3">
+                          <Badge className={STATUS_COLORS[report.status as keyof typeof STATUS_COLORS]}>
+                            {StatusIcon(report.status)}
+                            <span className="ml-1">{report.status.replace("_", " ")}</span>
+                          </Badge>
+                          <Badge variant="outline" className="gap-1">
+                            <ContentTypeIcon className="h-3 w-3" />
+                            {report.type}
+                          </Badge>
+                          <Badge variant="secondary">
+                            {REPORT_REASONS[report.reason as keyof typeof REPORT_REASONS]}
+                          </Badge>
+                        </div>
 
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                        <span>
-                          {formatDistanceToNow(new Date(report.createdAt), {
-                            addSuffix: true,
-                          })}
-                        </span>
-                        <span>•</span>
-                        <span>Content: {getContentTypeDisplay(report)}</span>
+                        {report.description && (
+                          <div className="bg-muted/50 rounded-lg p-3 mb-3">
+                            <p className="text-sm text-muted-foreground italic">
+                              "{report.description}"
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {formatDistanceToNow(new Date(report.createdAt), {
+                              addSuffix: true,
+                            })}
+                          </span>
+                          {report.reviewedAt && (
+                            <>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <CheckCircle className="h-3 w-3" />
+                                Reviewed {formatDistanceToNow(new Date(report.reviewedAt), {
+                                  addSuffix: true,
+                                })}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
                     {/* Actions */}
                     <div className="flex flex-col gap-2 md:w-48">
@@ -463,7 +676,8 @@ export default function ReportsPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))
+              );
+            })
           )}
         </div>
 
