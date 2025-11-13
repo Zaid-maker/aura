@@ -12,11 +12,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Loader2, MoreHorizontal, Flag } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { VerifiedBadge } from "@/components/verified-badge";
+import { ReportDialog } from "@/components/report-dialog";
 
 interface Comment {
   id: string;
@@ -50,6 +57,8 @@ export function CommentsDialog({
   const [commentText, setCommentText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportCommentId, setReportCommentId] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -118,7 +127,7 @@ export function CommentsDialog({
             </div>
           ) : comments.length > 0 ? (
             comments.map((comment) => (
-              <div key={comment.id} className="flex gap-3">
+              <div key={comment.id} className="flex gap-3 group">
                 <Link href={`/${comment.user.username}`}>
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={comment.user.image || ""} />
@@ -152,6 +161,31 @@ export function CommentsDialog({
                   </div>
                   <p className="text-sm mt-1">{comment.text}</p>
                 </div>
+                {/* Comment Menu - Only show for other users' comments */}
+                {session && comment.user.id !== session.user?.id && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setReportCommentId(comment.id);
+                          setShowReportDialog(true);
+                        }}
+                      >
+                        <Flag className="mr-2 h-4 w-4" />
+                        Report comment
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
             ))
           ) : (
@@ -193,6 +227,22 @@ export function CommentsDialog({
           </form>
         )}
       </DialogContent>
+
+      {/* Report Dialog */}
+      {reportCommentId && (
+        <ReportDialog
+          open={showReportDialog}
+          onOpenChange={(open) => {
+            setShowReportDialog(open);
+            if (!open) {
+              setReportCommentId(null);
+            }
+          }}
+          type="COMMENT"
+          contentId={reportCommentId}
+          contentType="comment"
+        />
+      )}
     </Dialog>
   );
 }

@@ -79,6 +79,7 @@ model User {
   notifications Notification[] @relation("NotificationReceiver")
   triggeredNotifications Notification[] @relation("NotificationActor")
   pushSubscriptions PushSubscription[]
+  reportsMade   Report[]  @relation("ReportsMade")
 }
 
 // Follow model for user relationships
@@ -200,4 +201,60 @@ model PushSubscription {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// Report model for content moderation
+model Report {
+  id          String       @id @default(cuid())
+  type        ReportType
+  reason      ReportReason
+  description String?      @db.Text
+  status      ReportStatus @default(PENDING)
+  
+  // Reporter information
+  reporterId  String
+  reporter    User         @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  
+  // Content being reported (only one should be set)
+  postId      String?
+  commentId   String?
+  reportedUserId String?   // User being reported
+  
+  // Timestamps
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  reviewedAt  DateTime?
+  reviewedBy  String?      // Admin who reviewed
+  
+  @@index([status, createdAt])
+  @@index([reporterId])
+  @@index([postId])
+  @@index([commentId])
+  @@index([reportedUserId])
+}
+
+enum ReportType {
+  POST
+  COMMENT
+  USER
+}
+
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  HATE_SPEECH
+  VIOLENCE
+  NUDITY
+  SELF_HARM
+  FALSE_INFORMATION
+  BULLYING
+  INTELLECTUAL_PROPERTY
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
 }

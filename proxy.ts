@@ -31,6 +31,9 @@ const protectedRoutes = [
   "/api/admin/notifications/system", // POST to send system notifications (admin only)
   "/api/admin/users", // GET all users (admin only)
   "/api/notifications/subscribe", // POST/DELETE/GET push notification subscriptions
+  "/api/reports", // POST to create reports (requires auth)
+  "/api/admin/reports", // GET all reports (admin only)
+  "/api/admin/reports/*", // GET/PUT/DELETE specific reports (admin only)
 ];
 
 // Define public routes that don't require authentication

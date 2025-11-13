@@ -39,6 +39,7 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { CommentsDialog } from "@/components/comments-dialog";
+import { ReportDialog } from "@/components/report-dialog";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { VerifiedBadge } from "@/components/verified-badge";
@@ -82,6 +83,7 @@ export function Post({
   const [showFullCaption, setShowFullCaption] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   const isOwnPost = session?.user?.id === post.user.id;
 
@@ -131,8 +133,11 @@ export function Post({
   };
 
   const handleReport = () => {
-    // Implement report logic
-    toast.info("Report feature coming soon");
+    if (!session) {
+      toast.error("Please sign in to report");
+      return;
+    }
+    setShowReportDialog(true);
   };
 
   const handleDeleteClick = () => {
@@ -439,6 +444,15 @@ export function Post({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Report Dialog */}
+      <ReportDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+        type="POST"
+        contentId={post.id}
+        contentType="post"
+      />
     </>
   );
 }
