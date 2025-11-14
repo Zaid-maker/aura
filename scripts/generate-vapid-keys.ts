@@ -24,7 +24,7 @@ async function generateVapidKeys() {
 
     // Generate keys
     const { stdout } = await execAsync("npx web-push generate-vapid-keys");
-    
+
     console.log("✅ VAPID keys generated successfully!\n");
     console.log("📋 Add these to your .env file:\n");
     console.log("─".repeat(60));
@@ -35,13 +35,12 @@ async function generateVapidKeys() {
     console.log("   - Never commit these keys to version control");
     console.log("   - Add NEXT_PUBLIC_VAPID_PUBLIC_KEY for frontend access");
     console.log("   - Add your email as VAPID_SUBJECT\n");
-    
+
     console.log("📝 Example .env configuration:\n");
     console.log("VAPID_PUBLIC_KEY=<your-public-key>");
     console.log("VAPID_PRIVATE_KEY=<your-private-key>");
     console.log("VAPID_SUBJECT=mailto:your-email@example.com");
     console.log("NEXT_PUBLIC_VAPID_PUBLIC_KEY=<your-public-key>\n");
-    
   } catch (error) {
     console.error("❌ Error generating VAPID keys:", error);
     console.log("\n💡 Manual generation:");

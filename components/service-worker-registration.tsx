@@ -35,7 +35,7 @@ export function ServiceWorkerRegistration() {
                 ) {
                   // New service worker is available
                   console.log("[PWA] New content available!");
-                  
+
                   // Show update notification
                   toast.info("A new version is available!", {
                     action: {
@@ -64,7 +64,7 @@ export function ServiceWorkerRegistration() {
       // Handle service worker messages
       navigator.serviceWorker.addEventListener("message", (event) => {
         console.log("[PWA] Message from SW:", event.data);
-        
+
         if (event.data.type === "NOTIFICATION_CLICKED") {
           // Handle notification click events
           console.log("[PWA] Notification clicked:", event.data.notificationId);
@@ -75,7 +75,7 @@ export function ServiceWorkerRegistration() {
       window.addEventListener("online", () => {
         console.log("[PWA] Back online");
         toast.success("You're back online!");
-        
+
         // Trigger background sync
         if ("serviceWorker" in navigator && "sync" in navigator.serviceWorker) {
           navigator.serviceWorker.ready.then((registration) => {
@@ -94,7 +94,9 @@ export function ServiceWorkerRegistration() {
   return null;
 }
 
-async function requestNotificationPermission(registration: ServiceWorkerRegistration) {
+async function requestNotificationPermission(
+  registration: ServiceWorkerRegistration,
+) {
   // Check if notifications are supported
   if (!("Notification" in window)) {
     console.log("[PWA] Notifications not supported");
@@ -117,7 +119,9 @@ async function requestNotificationPermission(registration: ServiceWorkerRegistra
   }
 }
 
-async function subscribeToPushNotifications(registration: ServiceWorkerRegistration) {
+async function subscribeToPushNotifications(
+  registration: ServiceWorkerRegistration,
+) {
   try {
     // Check if push is supported
     if (!("pushManager" in registration)) {
@@ -127,12 +131,12 @@ async function subscribeToPushNotifications(registration: ServiceWorkerRegistrat
 
     // Get existing subscription or create new one
     let subscription = await registration.pushManager.getSubscription();
-    
+
     if (!subscription) {
       // Subscribe to push notifications
       // Note: You'll need to generate VAPID keys for production
       const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      
+
       if (!publicKey) {
         console.log("[PWA] VAPID public key not configured");
         return;
@@ -165,9 +169,7 @@ async function subscribeToPushNotifications(registration: ServiceWorkerRegistrat
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
 
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);

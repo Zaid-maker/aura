@@ -150,10 +150,15 @@ export default function ReportsPage() {
         const allReports = data.reports;
         setStats({
           total: allReports.length,
-          pending: allReports.filter((r: Report) => r.status === "PENDING").length,
-          underReview: allReports.filter((r: Report) => r.status === "UNDER_REVIEW").length,
-          resolved: allReports.filter((r: Report) => r.status === "RESOLVED").length,
-          dismissed: allReports.filter((r: Report) => r.status === "DISMISSED").length,
+          pending: allReports.filter((r: Report) => r.status === "PENDING")
+            .length,
+          underReview: allReports.filter(
+            (r: Report) => r.status === "UNDER_REVIEW",
+          ).length,
+          resolved: allReports.filter((r: Report) => r.status === "RESOLVED")
+            .length,
+          dismissed: allReports.filter((r: Report) => r.status === "DISMISSED")
+            .length,
         });
       }
     } catch (error) {
@@ -209,7 +214,9 @@ export default function ReportsPage() {
       });
 
       if (response.ok) {
-        toast.success(`Report marked as ${newStatus.toLowerCase().replace("_", " ")}`);
+        toast.success(
+          `Report marked as ${newStatus.toLowerCase().replace("_", " ")}`,
+        );
         fetchReports();
         fetchStats();
       } else {
@@ -325,7 +332,9 @@ export default function ReportsPage() {
               }}
               disabled={isLoading}
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+              />
               Refresh
             </Button>
           </div>
@@ -356,7 +365,9 @@ export default function ReportsPage() {
               <div className="text-2xl font-bold text-yellow-500">
                 {stats.pending}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Awaiting review</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Awaiting review
+              </p>
             </CardContent>
           </Card>
           <Card className="border-l-4 border-l-blue-500">
@@ -455,7 +466,11 @@ export default function ReportsPage() {
               </div>
 
               {/* Status Tabs */}
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
                 <TabsList className="grid w-full grid-cols-5">
                   <TabsTrigger value="all">
                     All
@@ -535,7 +550,10 @@ export default function ReportsPage() {
             filteredReports.map((report) => {
               const ContentTypeIcon = getContentTypeIcon(report);
               return (
-                <Card key={report.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={report.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="pt-6">
                     <div className="flex flex-col md:flex-row gap-4">
                       {/* Reporter Info */}
@@ -543,7 +561,8 @@ export default function ReportsPage() {
                         <Avatar className="h-10 w-10 ring-2 ring-purple-500/20">
                           <AvatarImage src={report.reporter.image || ""} />
                           <AvatarFallback className="bg-purple-500/10">
-                            {report.reporter.username?.[0]?.toUpperCase() || "U"}
+                            {report.reporter.username?.[0]?.toUpperCase() ||
+                              "U"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
@@ -559,16 +578,28 @@ export default function ReportsPage() {
                       {/* Report Details */}
                       <div className="flex-1">
                         <div className="flex flex-wrap items-start gap-2 mb-3">
-                          <Badge className={STATUS_COLORS[report.status as keyof typeof STATUS_COLORS]}>
+                          <Badge
+                            className={
+                              STATUS_COLORS[
+                                report.status as keyof typeof STATUS_COLORS
+                              ]
+                            }
+                          >
                             {StatusIcon(report.status)}
-                            <span className="ml-1">{report.status.replace("_", " ")}</span>
+                            <span className="ml-1">
+                              {report.status.replace("_", " ")}
+                            </span>
                           </Badge>
                           <Badge variant="outline" className="gap-1">
                             <ContentTypeIcon className="h-3 w-3" />
                             {report.type}
                           </Badge>
                           <Badge variant="secondary">
-                            {REPORT_REASONS[report.reason as keyof typeof REPORT_REASONS]}
+                            {
+                              REPORT_REASONS[
+                                report.reason as keyof typeof REPORT_REASONS
+                              ]
+                            }
                           </Badge>
                         </div>
 
@@ -592,90 +623,94 @@ export default function ReportsPage() {
                               <span>•</span>
                               <span className="flex items-center gap-1">
                                 <CheckCircle className="h-3 w-3" />
-                                Reviewed {formatDistanceToNow(new Date(report.reviewedAt), {
-                                  addSuffix: true,
-                                })}
+                                Reviewed{" "}
+                                {formatDistanceToNow(
+                                  new Date(report.reviewedAt),
+                                  {
+                                    addSuffix: true,
+                                  },
+                                )}
                               </span>
                             </>
                           )}
                         </div>
                       </div>
 
-                    {/* Actions */}
-                    <div className="flex flex-col gap-2 md:w-48">
-                      <Link
-                        href={getContentLink(report)}
-                        target="_blank"
-                        className="w-full"
-                      >
-                        <Button
-                          variant="outline"
-                          size="sm"
+                      {/* Actions */}
+                      <div className="flex flex-col gap-2 md:w-48">
+                        <Link
+                          href={getContentLink(report)}
+                          target="_blank"
                           className="w-full"
                         >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          View Content
-                        </Button>
-                      </Link>
-
-                      {report.status === "PENDING" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            updateReportStatus(report.id, "UNDER_REVIEW")
-                          }
-                          disabled={actionLoading}
-                        >
-                          Start Review
-                        </Button>
-                      )}
-
-                      {report.status === "UNDER_REVIEW" && (
-                        <>
                           <Button
-                            variant="default"
+                            variant="outline"
                             size="sm"
-                            onClick={() =>
-                              updateReportStatus(report.id, "RESOLVED")
-                            }
-                            disabled={actionLoading}
-                            className="bg-green-600 hover:bg-green-700"
+                            className="w-full"
                           >
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Resolve
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            View Content
                           </Button>
+                        </Link>
+
+                        {report.status === "PENDING" && (
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() =>
-                              updateReportStatus(report.id, "DISMISSED")
+                              updateReportStatus(report.id, "UNDER_REVIEW")
                             }
                             disabled={actionLoading}
                           >
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Dismiss
+                            Start Review
                           </Button>
-                        </>
-                      )}
+                        )}
 
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedReport(report);
-                          setShowDeleteDialog(true);
-                        }}
-                        disabled={actionLoading}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </Button>
+                        {report.status === "UNDER_REVIEW" && (
+                          <>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() =>
+                                updateReportStatus(report.id, "RESOLVED")
+                              }
+                              disabled={actionLoading}
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              Resolve
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                updateReportStatus(report.id, "DISMISSED")
+                              }
+                              disabled={actionLoading}
+                            >
+                              <XCircle className="h-4 w-4 mr-2" />
+                              Dismiss
+                            </Button>
+                          </>
+                        )}
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedReport(report);
+                            setShowDeleteDialog(true);
+                          }}
+                          disabled={actionLoading}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
               );
             })
           )}

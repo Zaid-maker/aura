@@ -52,7 +52,9 @@ export function NotificationItem({
     return (
       <div
         className={`flex items-start gap-3 p-4 hover:bg-muted/50 transition-colors cursor-pointer ${
-          !read ? "bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500" : ""
+          !read
+            ? "bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500"
+            : ""
         }`}
         onClick={handleClick}
       >

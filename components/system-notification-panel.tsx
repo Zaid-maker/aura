@@ -15,7 +15,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Send, Loader2, CheckCircle2, AlertCircle, Search, Users } from "lucide-react";
+import {
+  Bell,
+  Send,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  Search,
+  Users,
+} from "lucide-react";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -69,7 +77,7 @@ export function SystemNotificationPanel() {
     setSelectedUserIds((prev) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
+        : [...prev, userId],
     );
   };
 
@@ -89,7 +97,7 @@ export function SystemNotificationPanel() {
       (user) =>
         user.username?.toLowerCase().includes(query) ||
         user.name?.toLowerCase().includes(query) ||
-        user.email?.toLowerCase().includes(query)
+        user.email?.toLowerCase().includes(query),
     );
   };
 
@@ -130,7 +138,7 @@ export function SystemNotificationPanel() {
       if (response.ok) {
         const data = await response.json();
         toast.success(
-          `System notification sent to ${data.recipientCount} user${data.recipientCount !== 1 ? "s" : ""}`
+          `System notification sent to ${data.recipientCount} user${data.recipientCount !== 1 ? "s" : ""}`,
         );
         setMessage("");
         setSelectedUserIds([]);
@@ -196,7 +204,10 @@ export function SystemNotificationPanel() {
         {/* Target Type */}
         <div className="space-y-3">
           <Label>Recipients</Label>
-          <RadioGroup value={targetType} onValueChange={(v) => setTargetType(v as "all" | "specific")}>
+          <RadioGroup
+            value={targetType}
+            onValueChange={(v) => setTargetType(v as "all" | "specific")}
+          >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="all" id="all" />
               <Label htmlFor="all" className="font-normal cursor-pointer">
@@ -227,7 +238,8 @@ export function SystemNotificationPanel() {
                 onClick={toggleSelectAll}
                 disabled={isLoadingUsers || getFilteredUsers().length === 0}
               >
-                {selectedUserIds.length === getFilteredUsers().length && getFilteredUsers().length > 0
+                {selectedUserIds.length === getFilteredUsers().length &&
+                getFilteredUsers().length > 0
                   ? "Deselect All"
                   : "Select All"}
               </Button>
@@ -271,7 +283,9 @@ export function SystemNotificationPanel() {
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={user.image || ""} />
                           <AvatarFallback>
-                            {user.username?.[0]?.toUpperCase() || user.name?.[0]?.toUpperCase() || "?"}
+                            {user.username?.[0]?.toUpperCase() ||
+                              user.name?.[0]?.toUpperCase() ||
+                              "?"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
@@ -294,7 +308,8 @@ export function SystemNotificationPanel() {
             {/* Selected count */}
             {selectedUserIds.length > 0 && (
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {selectedUserIds.length} user{selectedUserIds.length !== 1 ? "s" : ""} selected
+                {selectedUserIds.length} user
+                {selectedUserIds.length !== 1 ? "s" : ""} selected
               </p>
             )}
           </div>

@@ -34,9 +34,7 @@ sw.addEventListener("push", (event) => {
     requireInteraction: data.requireInteraction || false,
   };
 
-  event.waitUntil(
-    sw.registration.showNotification(title, options)
-  );
+  event.waitUntil(sw.registration.showNotification(title, options));
 });
 
 // Handle notification clicks
@@ -61,14 +59,14 @@ sw.addEventListener("notificationclick", (event) => {
         if (sw.clients.openWindow) {
           return sw.clients.openWindow(urlToOpen);
         }
-      })
+      }),
   );
 });
 
 // Handle notification close
 sw.addEventListener("notificationclose", (event) => {
   console.log("[SW] Notification closed", event);
-  
+
   // Track notification dismissal if needed
   const data = event.notification.data;
   if (data?.notificationId) {
@@ -115,9 +113,9 @@ sw.addEventListener("message", (event) => {
     event.waitUntil(
       caches.keys().then((cacheNames) => {
         return Promise.all(
-          cacheNames.map((cacheName) => caches.delete(cacheName))
+          cacheNames.map((cacheName) => caches.delete(cacheName)),
         );
-      })
+      }),
     );
   }
 });

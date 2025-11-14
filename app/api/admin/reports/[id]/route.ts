@@ -80,10 +80,7 @@ export async function PUT(
     // Validate status
     const validStatuses = ["PENDING", "UNDER_REVIEW", "RESOLVED", "DISMISSED"];
     if (!status || !validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: "Invalid status" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
     const report = await prisma.report.update({

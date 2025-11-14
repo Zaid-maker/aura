@@ -24,7 +24,11 @@ interface ReportDialogProps {
 }
 
 const REPORT_REASONS = [
-  { value: "SPAM", label: "Spam", description: "Repetitive or unsolicited content" },
+  {
+    value: "SPAM",
+    label: "Spam",
+    description: "Repetitive or unsolicited content",
+  },
   {
     value: "HARASSMENT",
     label: "Harassment or Bullying",
@@ -151,7 +155,10 @@ export function ReportDialog({
           {/* Reason Selection */}
           <div className="space-y-3">
             <Label>Why are you reporting this?</Label>
-            <RadioGroup value={selectedReason} onValueChange={setSelectedReason}>
+            <RadioGroup
+              value={selectedReason}
+              onValueChange={setSelectedReason}
+            >
               {REPORT_REASONS.map((reason) => (
                 <div
                   key={reason.value}
@@ -177,9 +184,7 @@ export function ReportDialog({
 
           {/* Additional Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">
-              Additional details (optional)
-            </Label>
+            <Label htmlFor="description">Additional details (optional)</Label>
             <Textarea
               id="description"
               placeholder="Provide any additional information that might help us review this report..."
@@ -197,8 +202,8 @@ export function ReportDialog({
           {/* Privacy Notice */}
           <div className="rounded-lg bg-muted p-3">
             <p className="text-xs text-muted-foreground">
-              Your report is anonymous. The person or content you're reporting won't
-              know who submitted the report.
+              Your report is anonymous. The person or content you're reporting
+              won't know who submitted the report.
             </p>
           </div>
         </div>

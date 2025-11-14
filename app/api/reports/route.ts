@@ -58,8 +58,7 @@ export async function POST(req: NextRequest) {
     if (!postId && !commentId && !reportedUserId) {
       return NextResponse.json(
         {
-          error:
-            "Report must reference a post, comment, or user",
+          error: "Report must reference a post, comment, or user",
         },
         { status: 400, headers },
       );

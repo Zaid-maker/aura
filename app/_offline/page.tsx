@@ -2,7 +2,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "You're Offline - Aura",
-  description: "You are currently offline. Please check your internet connection.",
+  description:
+    "You are currently offline. Please check your internet connection.",
 };
 
 export default function OfflinePage() {

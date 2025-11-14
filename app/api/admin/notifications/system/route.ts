@@ -20,15 +20,18 @@ export async function POST(req: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized. Authentication required." },
-        { status: 401, headers }
+        { status: 401, headers },
       );
     }
 
     // Only admins can send system notifications
     if (session.user.role !== "ADMIN") {
       return NextResponse.json(
-        { error: "Forbidden. Only administrators can send system notifications." },
-        { status: 403, headers }
+        {
+          error:
+            "Forbidden. Only administrators can send system notifications.",
+        },
+        { status: 403, headers },
       );
     }
 
@@ -39,14 +42,14 @@ export async function POST(req: NextRequest) {
     if (!message || typeof message !== "string" || message.trim() === "") {
       return NextResponse.json(
         { error: "Message is required and must be a non-empty string" },
-        { status: 400, headers }
+        { status: 400, headers },
       );
     }
 
     if (message.length > 500) {
       return NextResponse.json(
         { error: "Message must be 500 characters or less" },
-        { status: 400, headers }
+        { status: 400, headers },
       );
     }
 
@@ -54,7 +57,7 @@ export async function POST(req: NextRequest) {
     if (!["all", "specific"].includes(targetType)) {
       return NextResponse.json(
         { error: "Target type must be 'all' or 'specific'" },
-        { status: 400, headers }
+        { status: 400, headers },
       );
     }
 
@@ -62,8 +65,11 @@ export async function POST(req: NextRequest) {
     if (targetType === "specific") {
       if (!Array.isArray(targetUserIds) || targetUserIds.length === 0) {
         return NextResponse.json(
-          { error: "Target user IDs must be a non-empty array when target type is 'specific'" },
-          { status: 400, headers }
+          {
+            error:
+              "Target user IDs must be a non-empty array when target type is 'specific'",
+          },
+          { status: 400, headers },
         );
       }
     }
@@ -100,13 +106,13 @@ export async function POST(req: NextRequest) {
         message: "System notification sent successfully",
         recipientCount: result.count,
       },
-      { headers }
+      { headers },
     );
   } catch (error) {
     console.error("Error sending system notification:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
