@@ -52,6 +52,7 @@ interface PostViewProps {
       };
     }>;
     isLiked?: boolean;
+    isSaved?: boolean;
     likesCount: number;
     commentsCount: number;
   };
@@ -61,7 +62,7 @@ export function PostView({ post }: PostViewProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(post.isSaved || false);
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -151,6 +152,30 @@ export function PostView({ post }: PostViewProps) {
       }
     } catch (error) {
       toast.error("Failed to delete post");
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!session) {
+      toast.error("Please sign in to bookmark posts");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${post.id}/bookmark`, {
+        method: isSaved ? "DELETE" : "POST",
+      });
+
+      if (response.ok) {
+        setIsSaved(!isSaved);
+        toast.success(isSaved ? "Bookmark removed" : "Post bookmarked");
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to bookmark post");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      toast.error("Failed to bookmark post");
     }
   };
 
@@ -343,11 +368,11 @@ export function PostView({ post }: PostViewProps) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setIsSaved(!isSaved)}
+                  onClick={handleBookmark}
                   className="hover:bg-transparent"
                 >
                   <Bookmark
-                    className={`h-6 w-6 ${isSaved ? "fill-current" : ""}`}
+                    className={`h-6 w-6 transition-all ${isSaved ? "fill-current scale-110" : ""}`}
                   />
                 </Button>
               </div>

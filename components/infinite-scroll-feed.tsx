@@ -22,6 +22,7 @@ interface PostData {
   };
   isLiked: boolean;
   isFollowing: boolean;
+  isSaved: boolean;
 }
 
 interface InfiniteScrollFeedProps {
@@ -107,6 +108,7 @@ export function InfiniteScrollFeed({
           }}
           isLiked={post.isLiked}
           isFollowing={post.isFollowing}
+          isSaved={post.isSaved}
         />
       ))}
 

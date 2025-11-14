@@ -65,16 +65,18 @@ interface PostProps {
   };
   isLiked?: boolean;
   isFollowing?: boolean;
+  isSaved?: boolean;
 }
 
 export function Post({
   post,
   isLiked: initialIsLiked = false,
   isFollowing: initialIsFollowing = false,
+  isSaved: initialIsSaved = false,
 }: PostProps) {
   const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(initialIsLiked);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(initialIsSaved);
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [likesCount, setLikesCount] = useState(post._count?.likes || 0);
   const [commentsCount, setCommentsCount] = useState(
@@ -183,6 +185,30 @@ export function Post({
   const handleDoubleClick = () => {
     if (!isLiked) {
       handleLike();
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!session) {
+      toast.error("Please sign in to bookmark posts");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${post.id}/bookmark`, {
+        method: isSaved ? "DELETE" : "POST",
+      });
+
+      if (response.ok) {
+        setIsSaved(!isSaved);
+        toast.success(isSaved ? "Bookmark removed" : "Post bookmarked");
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to bookmark post");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      toast.error("Failed to bookmark post");
     }
   };
 
@@ -338,10 +364,10 @@ export function Post({
               variant="ghost"
               size="icon"
               className="hover:bg-transparent hover:opacity-50 h-8 w-8 transition-opacity p-0 -mr-2"
-              onClick={() => setIsSaved(!isSaved)}
+              onClick={handleBookmark}
             >
               <Bookmark
-                className={`h-7 w-7 ${isSaved ? "fill-current" : ""}`}
+                className={`h-7 w-7 transition-all ${isSaved ? "fill-current scale-110" : ""}`}
               />
             </Button>
           </div>

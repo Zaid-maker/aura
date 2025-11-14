@@ -12,6 +12,7 @@ export default async function Home() {
   // Get current user's likes and following
   let userLikes: string[] = [];
   let userFollowing: string[] = [];
+  let userSavedPosts: string[] = [];
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -26,10 +27,16 @@ export default async function Home() {
             followingId: true,
           },
         },
+        savedPosts: {
+          select: {
+            postId: true,
+          },
+        },
       },
     });
     userLikes = user?.likes.map((like) => like.postId) || [];
     userFollowing = user?.following.map((follow) => follow.followingId) || [];
+    userSavedPosts = user?.savedPosts.map((saved) => saved.postId) || [];
   }
 
   // Fetch initial batch of posts (10 posts)
@@ -72,6 +79,7 @@ export default async function Home() {
     ...post,
     isLiked: userLikes.includes(post.id),
     isFollowing: userFollowing.includes(post.user.id),
+    isSaved: userSavedPosts.includes(post.id),
   }));
 
   // Fetch recent stories (grouped by user)

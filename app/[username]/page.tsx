@@ -56,6 +56,23 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           },
         },
       },
+      savedPosts: {
+        include: {
+          post: {
+            include: {
+              _count: {
+                select: {
+                  likes: true,
+                  comments: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
       _count: {
         select: {
           posts: true,
@@ -231,15 +248,47 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         {/* Saved Posts (Only for own profile) */}
         {isOwnProfile && (
           <TabsContent value="saved" className="mt-6">
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full border-2 border-black mb-4">
-                <Bookmark className="h-8 w-8" />
+            {user.savedPosts && user.savedPosts.length > 0 ? (
+              <div className="grid grid-cols-3 gap-1 md:gap-4">
+                {user.savedPosts.map((savedPost) => (
+                  <Link
+                    key={savedPost.id}
+                    href={`/p/${savedPost.post.id}`}
+                    className="relative aspect-square group"
+                  >
+                    <Image
+                      src={savedPost.post.imageUrl}
+                      alt={savedPost.post.caption || "Saved post"}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 33vw, 25vw"
+                    />
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <div className="flex gap-6 text-white">
+                        <span className="flex items-center gap-1 font-semibold">
+                          ❤️ {savedPost.post._count.likes}
+                        </span>
+                        <span className="flex items-center gap-1 font-semibold">
+                          💬 {savedPost.post._count.comments}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <h3 className="text-2xl font-semibold mb-2">Save posts</h3>
-              <p className="text-gray-600">
-                Save photos and videos that you want to see again.
-              </p>
-            </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full border-2 border-black mb-4">
+                  <Bookmark className="h-8 w-8" />
+                </div>
+                <h3 className="text-2xl font-semibold mb-2">Save posts</h3>
+                <p className="text-gray-600">
+                  Save photos and videos that you want to see again. No one is
+                  notified when you save a post.
+                </p>
+              </div>
+            )}
           </TabsContent>
         )}
 

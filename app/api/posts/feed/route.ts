@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
     // Get current user's likes and following
     let userLikes: string[] = [];
     let userFollowing: string[] = [];
+    let userSavedPosts: string[] = [];
     if (session?.user?.email) {
       const user = await prisma.user.findUnique({
         where: { email: session.user.email },
@@ -38,10 +39,16 @@ export async function GET(req: NextRequest) {
               followingId: true,
             },
           },
+          savedPosts: {
+            select: {
+              postId: true,
+            },
+          },
         },
       });
       userLikes = user?.likes.map((like) => like.postId) || [];
       userFollowing = user?.following.map((follow) => follow.followingId) || [];
+      userSavedPosts = user?.savedPosts.map((saved) => saved.postId) || [];
     }
 
     // Validate cursor if provided
@@ -101,6 +108,7 @@ export async function GET(req: NextRequest) {
       ...post,
       isLiked: userLikes.includes(post.id),
       isFollowing: userFollowing.includes(post.user.id),
+      isSaved: userSavedPosts.includes(post.id),
     }));
 
     return NextResponse.json({

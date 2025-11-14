@@ -24,6 +24,13 @@ async function getPost(postId: string, userId?: string) {
             },
           }
         : false,
+      savedPosts: userId
+        ? {
+            where: {
+              userId: userId,
+            },
+          }
+        : false,
       comments: {
         include: {
           user: true,
@@ -48,6 +55,7 @@ async function getPost(postId: string, userId?: string) {
   return {
     ...post,
     isLiked: userId ? (post.likes as any[]).length > 0 : false,
+    isSaved: userId ? (post.savedPosts as any[]).length > 0 : false,
     likesCount: post._count.likes,
     commentsCount: post._count.comments,
   } as any;
